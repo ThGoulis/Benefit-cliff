@@ -372,11 +372,16 @@
   // Επιστρέφει το σύνολο σε ένα δεδομένο μεικτό εισόδημα, παρεμβάλλοντας
   // ανάμεσα στα κοντινότερα δείγματα — χρησιμοποιείται για να δείξουμε πόσο
   // "κρατάει" ο χρήστης από μια υποθετική αύξηση +100€.
-  function totalAtGross(targetGross){
+  // Επιστρέφει το άθροισμα ΕΕΕ+Α21+ενοίκιο+ΚΟΤ σε ένα δεδομένο μεικτό
+  // εισόδημα (από τα ήδη υπολογισμένα samples) — χρειάζεται ξεχωριστά από
+  // το συνολικό ποσό, ώστε η κανονική προοδευτικότητα του φόρου να μην
+  // περνάει ως "απώλεια επιδόματος" στο insight/ρίσκο.
+  function benefitsAtGross(targetGross){
     const clamped = Math.max(MIN_GROSS, Math.min(MAX_GROSS, targetGross));
     let idx = Math.round((clamped - MIN_GROSS) / STEP);
     idx = Math.max(0, Math.min(samples.length - 1, idx));
-    return samples[idx].total;
+    const s = samples[idx];
+    return s.eee + s.a21 + s.rent + s.kot;
   }
 
   function drawCurve(){
@@ -464,19 +469,23 @@
 
     const nextCliff = findNextCliff(gross);
 
-    // Πόσο "κρατάει" ο χρήστης από μια υποθετική αύξηση +100€ από εδώ
-    const totalNow = totalAtGross(gross);
-    const totalPlus100 = totalAtGross(gross + 100);
-    const retained = totalPlus100 - totalNow;
-    const ratio = retained / 100;
+    // Μεταβολή ΕΙΔΙΚΑ των επιδομάτων (όχι του συνόλου) στα επόμενα 100€ —
+    // έτσι η κανονική προοδευτικότητα του φόρου δεν περνάει ως "απώλεια
+    // επιδόματος". Ο μισθός μετά φόρου πάντα αυξάνεται με το μεικτό, οπότε
+    // μόνο η μεταβολή ΕΕΕ/Α21/ενοικίου/ΚΟΤ μας ενδιαφέρει εδώ.
+    const benefitsNow = benefitsAtGross(gross);
+    const benefitsPlus100 = benefitsAtGross(gross + 100);
+    const benefitDelta100 = benefitsPlus100 - benefitsNow; // συνήθως ≤ 0
 
     // Μία κοινή "σοβαρότητα" για ρίσκο + insight, ώστε να μη δείχνουν
-    // αντιφατικά πράγματα (π.χ. "καμία αύξηση δεν σε ωφελεί" σε πράσινο ρίσκο).
+    // αντιφατικά πράγματα. Βασίζεται αποκλειστικά σε πραγματική απώλεια
+    // επιδόματος (κοντινός γκρεμός ή σταδιακή απόσβεση ΕΕΕ), όχι στο
+    // συνολικό ποσοστό διατήρησης.
     const cliffImminent = nextCliff && nextCliff.distance <= 100;
     const cliffNear = nextCliff && nextCliff.distance <= 400;
     let severity;
-    if(cliffImminent || ratio < 0.3) severity = 'high';
-    else if(cliffNear || ratio < 0.7) severity = 'medium';
+    if(cliffImminent || benefitDelta100 <= -40) severity = 'high';
+    else if(cliffNear || benefitDelta100 <= -10) severity = 'medium';
     else severity = 'low';
 
     const severityClass = { high: 'drop-color', medium: 'warn-color', low: 'gain-color' }[severity];
@@ -494,12 +503,14 @@
     summaryInsightEl.classList.add(severityClass);
     if(cliffImminent){
       summaryInsightEl.textContent = `Προσοχή: σε ${nextCliff.distance}€ ακόμα μεικτό, χάνεις ${Math.round(nextCliff.dropAmount)}€ σε επίδομα.`;
-    } else if(ratio < 0.3){
-      summaryInsightEl.textContent = `Σχεδόν καμία αύξηση μισθού δεν φτάνει τελικά στην τσέπη σου εδώ — μόνο ${Math.round(retained)}€ από κάθε 100€.`;
-    } else if(severity === 'medium'){
-      summaryInsightEl.textContent = `Μέρος της αύξησης μισθού αντισταθμίζεται από απώλεια επιδομάτων εδώ — κρατάς ${Math.round(retained)}€ από κάθε 100€.`;
+    } else if(benefitDelta100 <= -40){
+      summaryInsightEl.textContent = `Η επόμενη αύξηση μισθού μειώνει τα επιδόματά σου κατά περίπου ${Math.round(-benefitDelta100)}€ ανά 100€ αύξησης.`;
+    } else if(benefitDelta100 <= -10){
+      summaryInsightEl.textContent = `Μέρος της αύξησης μισθού αντισταθμίζεται από μικρή μείωση επιδομάτων εδώ (περίπου ${Math.round(-benefitDelta100)}€ ανά 100€).`;
+    } else if(benefitsNow > 0 || nextCliff){
+      summaryInsightEl.textContent = `Τα επιδόματά σου παραμένουν σταθερά σε αυτό το εύρος — καμία άμεση απώλεια.`;
     } else {
-      summaryInsightEl.textContent = `Σε αυτό το εύρος, οι αυξήσεις μισθού πηγαίνουν σχεδόν ολόκληρες στην τσέπη σου — ${Math.round(retained)}€ από κάθε 100€.`;
+      summaryInsightEl.textContent = `Δεν υπάρχει ενεργό επίδομα σε αυτό το εισόδημα — η αύξηση μισθού μειώνεται μόνο από φόρο/εισφορές, όχι από απώλεια επιδόματος.`;
     }
   }
 
