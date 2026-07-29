@@ -219,7 +219,6 @@
   const ageSelect2 = document.getElementById('ageSelect2');
   const axisLabel = document.getElementById('axisLabel');
 
-  const grossReadout = document.getElementById('grossReadout');
   const netReadout = document.getElementById('netReadout');
   const deltaReadout = document.getElementById('deltaReadout');
   const e1Readout = document.getElementById('e1Readout');
@@ -424,7 +423,6 @@
     marker.setAttribute('cx', xFor(gross));
     marker.setAttribute('cy', yFor(r.total));
 
-    grossReadout.textContent = fmt(gross);
     netReadout.textContent = fmt(r.total);
     e1Readout.textContent = fmt((gross + (h.hasSpouse ? sg : 0)) * 14);
     if(document.activeElement !== grossIncomeInput){

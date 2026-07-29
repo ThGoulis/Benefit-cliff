@@ -83,15 +83,11 @@
       <div class="slider-row">
         <div class="income-input-row">
           <label for="grossIncomeInput">Μεικτό εισόδημα (άτομο 1)</label>
-          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200">
+          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <label for="incomeSlider">Σύρε το μεικτό εισόδημα</label>
         <input type="range" id="incomeSlider" min="200" max="3500" value="200" step="10">
         <div class="readouts">
-          <div class="readout">
-            <div class="num" id="grossReadout">400 €</div>
-            <div class="lbl">Μεικτό εισόδημα</div>
-          </div>
           <div class="readout">
             <div class="num" id="netReadout">690 €</div>
             <div class="lbl">Καθαρό διαθέσιμο εισόδημα</div>
