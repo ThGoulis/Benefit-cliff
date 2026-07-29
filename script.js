@@ -34,10 +34,12 @@
   };
 
   const HOUSEHOLDS = {
-    single:  { label: 'άγαμος/η χωρίς παιδιά', extraAdults: 0, minors: 0, hasSpouse: false, children: 0, baseCredit: 777 },
-    couple0: { label: 'ζευγάρι χωρίς παιδιά',   extraAdults: 1, minors: 0, hasSpouse: true,  children: 0, baseCredit: 777 },
-    couple1: { label: 'ζευγάρι με 1 παιδί',    extraAdults: 1, minors: 1, hasSpouse: true,  children: 1, baseCredit: 810 },
-    couple2: { label: 'ζευγάρι με 2 παιδιά',   extraAdults: 1, minors: 2, hasSpouse: true,  children: 2, baseCredit: 900 }
+    single:  { label: 'άγαμος/η χωρίς παιδιά', extraAdults: 0, minors: 0, hasSpouse: false, children: 0, baseCredit: 777, isSingleParent: false },
+    couple0: { label: 'ζευγάρι χωρίς παιδιά',   extraAdults: 1, minors: 0, hasSpouse: true,  children: 0, baseCredit: 777, isSingleParent: false },
+    couple1: { label: 'ζευγάρι με 1 παιδί',    extraAdults: 1, minors: 1, hasSpouse: true,  children: 1, baseCredit: 810, isSingleParent: false },
+    couple2: { label: 'ζευγάρι με 2 παιδιά',   extraAdults: 1, minors: 2, hasSpouse: true,  children: 2, baseCredit: 900, isSingleParent: false },
+    mono1:   { label: 'μονογονεϊκή με 1 παιδί', extraAdults: 0, minors: 1, hasSpouse: false, children: 1, baseCredit: 810, isSingleParent: true },
+    mono2:   { label: 'μονογονεϊκή με 2 παιδιά', extraAdults: 0, minors: 2, hasSpouse: false, children: 2, baseCredit: 900, isSingleParent: true }
   };
 
   function annualTax(annualTaxable, ageBracket){
@@ -66,10 +68,14 @@
     return perFirstTwo * 2; // v1 υποστηρίζει μέχρι 2 παιδιά
   }
 
-  // Επίδομα ενοικίου — εισοδηματικό κριτήριο.
+  // Επίδομα ενοικίου — εισοδηματικό κριτήριο. Σε μονογονεϊκή οικογένεια με
+  // τουλάχιστον 1 ανήλικο, το εισοδηματικό όριο (όχι το ποσό) παίρνει
+  // επιπλέον +3.500€ (πηγή: oikogeneia.gov.gr) — στην πράξη αυτό εξισώνει
+  // το όριο μονογονεϊκής+Ν παιδιών με του ζευγαριού+Ν παιδιών.
   function rentBenefit(annualTaxable, h){
     const extraMembers = h.extraAdults + h.minors;
-    const incomeLimit = Math.min(7000 + 3500 * extraMembers, 21000);
+    const monoBoost = (h.isSingleParent && h.minors >= 1) ? 3500 : 0;
+    const incomeLimit = Math.min(7000 + 3500 * extraMembers + monoBoost, 21000);
     if(annualTaxable > incomeLimit) return 0;
     return Math.min(70 + 35 * extraMembers, 210);
   }
@@ -101,13 +107,21 @@
      Ακίνητη περιουσία: ίδιο πλαφόν με το επίδομα ενοικίου (120k+15k/
      μέλος, μέγιστο 180k). Καταθέσεις: ίδιο όριο με το ίδιο το
      εισοδηματικό κριτήριο του ΚΟΤ (9k-18k ανάλογα σύνθεση).
+     Το εισοδηματικό όριο είναι βασισμένο στη ΘΕΣΗ του μέλους, όχι στο
+     αν είναι ενήλικας/ανήλικος — το 2ο μέλος (όποιο κι αν είναι, σύζυγος
+     ή παιδί) προσθέτει πάντα 4.500€, κάθε επόμενο 2.250€. Αυτό ταιριάζει
+     με την πηγή που δείχνει "2 ενήλικες" και "μονογονεϊκή με 1 παιδί" να
+     έχουν το ΙΔΙΟ όριο (13.500€) — άρα δεν χρειάζεται ειδικός κλάδος για
+     μονογονεϊκές, μόνο σωστός γενικός τύπος.
      Δεν μοντελοποιούνται: προσαύξηση ορίου εισοδήματος για ΑΜΕΑ 67%+
      (+8.000€) ή μηχανική υποστήριξη (+15.000€), ΚΟΤ Α (υψηλότερη
      έκπτωση, ευάλωτες ομάδες), ΚΟΤ Γ (πολύτεκνοι), και το προσαυξημένο
      όριο κατανάλωσης (1.900kWh/4μηνο αντί 1.400) για ήδη-δικαιούχους ΕΕΕ.
      ---------------------------------------------------------- */
   function kotIncomeLimit(h){
-    return Math.min(9000 + 4500 * h.extraAdults + 2250 * h.minors, 27000);
+    const n = h.extraAdults + h.minors + 1;
+    if(n <= 1) return 9000;
+    return Math.min(9000 + 4500 + 2250 * (n - 2), 27000);
   }
   function kotBenefit(annualTaxable, h, propertyValue, deposits, consumptionKwh){
     const limit = kotIncomeLimit(h);
@@ -153,16 +167,29 @@
 
     const annualTaxable = combinedTaxableMonthly * 14;
 
-    // ΕΕΕ — βασίζεται στο συνολικό φορολογητέο εισόδημα νοικοκυριού
-    const guaranteed = Math.min(250 + h.extraAdults * 125 + h.minors * 75, 1125);
+    // ΕΕΕ — βασίζεται στο συνολικό φορολογητέο εισόδημα νοικοκυριού.
+    // Ποσά (216€ βάση, +108€/ενήλικο, +54€/ανήλικο, μέγιστο 972€/μήνα) και
+    // μέγιστο εξαμηνιαίο εισόδημα 5.832€ επιβεβαιωμένα από oikogeneia.gov.gr
+    // (Υπουργείο Κοινωνικής Συνοχής και Οικογένειας, ενημέρωση 21/1/2026).
+    // Σε μονογονεϊκή οικογένεια, το μεγαλύτερο σε ηλικία ανήλικο λογίζεται
+    // ως ενήλικας — μετράει στα 108€, όχι στα 54€.
+    let eeeExtraAdults = h.extraAdults, eeeMinors = h.minors;
+    if(h.isSingleParent && h.minors >= 1){
+      eeeExtraAdults += 1;
+      eeeMinors -= 1;
+    }
+    const guaranteed = Math.min(216 + eeeExtraAdults * 108 + eeeMinors * 54, 972);
     let eee = guaranteed - combinedTaxableMonthly;
     eee = eee < 10 ? 0 : Math.min(eee, guaranteed);
     const eeeAssetsOk = propertyValue <= eeeRealEstateLimit(totalMembers) && deposits <= eeeDepositLimit(totalMembers);
     const eeeBlockedByAssets = eee > 0 && !eeeAssetsOk;
     if(!eeeAssetsOk) eee = 0;
 
-    // Α21
-    const coeff = 1 + (h.hasSpouse ? 0.5 : 0) + h.children * 0.25;
+    // Α21 — σε μονογονεϊκή οικογένεια το 1ο τέκνο έχει στάθμιση 0,5 αντί
+    // για 0,25 (άρθρο 214 ν.4512/2018, όπως τροποποιήθηκε).
+    const coeff = h.isSingleParent
+      ? 1 + (h.children >= 1 ? 0.5 + Math.max(0, h.children - 1) * 0.25 : 0)
+      : 1 + (h.hasSpouse ? 0.5 : 0) + h.children * 0.25;
     const equivalentAnnual = annualTaxable / coeff;
     let category = 0;
     if(equivalentAnnual <= 6000) category = 1;
@@ -170,8 +197,10 @@
     else if(equivalentAnnual <= 15000) category = 3;
     const a21 = a21ChildAmount(category, h.children);
 
-    // Επίδομα ενοικίου
+    // Επίδομα ενοικίου — +35€ πάγια προσαύξηση μονογονεϊκότητας πριν το πλαφόν,
+    // μόνο όταν το νοικοκυριό είναι ήδη εντός εισοδηματικού ορίου.
     let rent = rentBenefit(annualTaxable, h);
+    if(rent > 0 && h.isSingleParent) rent = Math.min(rent + 35, 210);
     const rentAssetsOk = propertyValue <= rentRealEstateLimit(totalMembers) && deposits <= rentDepositLimit(totalMembers);
     const rentBlockedByAssets = rent > 0 && !rentAssetsOk;
     if(!rentAssetsOk) rent = 0;
