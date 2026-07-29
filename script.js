@@ -210,6 +210,7 @@
   const cliffLayer = document.getElementById('cliffLayer');
   const marker = document.getElementById('movingMarker');
   const slider = document.getElementById('incomeSlider');
+  const grossIncomeInput = document.getElementById('grossIncomeInput');
   const householdSelect = document.getElementById('householdSelect');
   const spouseIncomeField = document.getElementById('spouseIncomeField');
   const spouseIncomeInput = document.getElementById('spouseIncome');
@@ -426,6 +427,9 @@
     grossReadout.textContent = fmt(gross);
     netReadout.textContent = fmt(r.total);
     e1Readout.textContent = fmt((gross + (h.hasSpouse ? sg : 0)) * 14);
+    if(document.activeElement !== grossIncomeInput){
+      grossIncomeInput.value = Math.round(gross).toLocaleString('el-GR');
+    }
 
     if(showDelta && lastTotal !== null){
       const delta = Math.round(r.total - lastTotal);
@@ -527,6 +531,14 @@
   }
 
   slider.addEventListener('input', update);
+
+  grossIncomeInput.addEventListener('input', () => {
+    formatFieldValue(grossIncomeInput);
+    const target = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFormatted(grossIncomeInput.value)));
+    slider.value = target;
+    update();
+  });
+
   householdSelect.addEventListener('change', rebuildAll);
   ageSelect1.addEventListener('change', rebuildAll);
   ageSelect2.addEventListener('change', rebuildAll);

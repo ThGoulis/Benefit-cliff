@@ -263,6 +263,31 @@
   }
   .chart-caption-text.drop{ fill: var(--drop); font-weight:600; }
 
+  .income-input-row{
+    display:flex;
+    align-items: baseline;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  .income-input-row label{
+    font-size: 12px;
+    color: var(--ink-soft);
+    flex: none;
+  }
+  .income-input-row input{
+    font-family:'Newsreader', serif;
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding: 2px 0;
+    width: 130px;
+  }
+  .income-input-row input:focus{ outline: none; border-bottom-color: var(--contour); }
+
   .slider-row{
     margin-top: 6px;
     padding-top: 16px;
@@ -298,6 +323,7 @@
     .slider-row{ align-items: stretch; }
     .slider-row label{ flex-basis: 100%; }
     input[type=range]{ flex-basis: 100%; }
+    .income-input-row{ flex-direction: column; align-items: flex-start; gap: 4px; }
   }
   .readouts{
     display:flex;
@@ -357,6 +383,8 @@
     transition: background-color 0.15s ease, color 0.15s ease;
   }
   .whatif-btn:hover{ background: var(--contour); color: var(--paper-card); }
+  .whatif-btn-neg{ color: var(--drop); border-color: var(--drop); opacity: 0.75; }
+  .whatif-btn-neg:hover{ background: var(--drop); color: var(--paper-card); opacity: 1; }
 
   /* ---------- Section shell ---------- */
   .section{

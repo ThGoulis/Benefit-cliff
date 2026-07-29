@@ -81,6 +81,10 @@
       </svg>
 
       <div class="slider-row">
+        <div class="income-input-row">
+          <label for="grossIncomeInput">Μεικτό εισόδημα (άτομο 1)</label>
+          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200">
+        </div>
         <label for="incomeSlider">Σύρε το μεικτό εισόδημα</label>
         <input type="range" id="incomeSlider" min="200" max="3500" value="200" step="10">
         <div class="readouts">
@@ -104,8 +108,12 @@
       </div>
 
       <div class="whatif-row">
-        <span class="whatif-label">Τι θα γινόταν με αύξηση</span>
+        <span class="whatif-label">Τι θα γινόταν με</span>
         <div class="whatif-buttons">
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-1000">−1.000€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-500">−500€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-200">−200€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-100">−100€</button>
           <button type="button" class="whatif-btn" data-amount="100">+100€</button>
           <button type="button" class="whatif-btn" data-amount="200">+200€</button>
           <button type="button" class="whatif-btn" data-amount="500">+500€</button>
