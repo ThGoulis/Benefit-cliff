@@ -413,6 +413,18 @@
     color: var(--ink-faint);
     margin-bottom: 8px;
   }
+  .field.spouse-field{
+    border-left: 3px solid var(--contour-soft);
+  }
+  .field.spouse-field label{
+    color: var(--contour);
+  }
+  .field.criteria-field{
+    border-left: 3px solid var(--hazard);
+  }
+  .field.criteria-field label{
+    color: var(--hazard);
+  }
   .field select, .field input[type=number], .field input[type=text]{
     width:100%;
     padding: 8px 0;
