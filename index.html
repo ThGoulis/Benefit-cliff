@@ -32,10 +32,10 @@
       <button class="intro-close" id="introCloseBtn" aria-label="Κλείσιμο">×</button>
       <div class="intro-eyebrow">Πώς να το διαβάσεις</div>
       <ul class="intro-list">
-        <li>Διάλεξε <strong>σύνθεση νοικοκυριού</strong> και ηλικία(-ες) στην ενότητα 02.</li>
+        <li>Διάλεξε <strong>σύνθεση νοικοκυριού</strong> και ηλικία(-ες) στην ενότητα 03.</li>
         <li>Σύρε το <strong>slider</strong> στο διάγραμμα — βλέπεις πώς αλλάζει το πραγματικό καθαρό διαθέσιμο εισόδημα, όχι μόνο ο μισθός.</li>
         <li>Τα <strong>⚠ σημάδια</strong> στο διάγραμμα δείχνουν απότομες πτώσεις — σημεία όπου η αύξηση μισθού σου κοστίζει επίδομα.</li>
-        <li>Ο πίνακας στην ενότητα 03 αναλύει το κάθε επίδομα ξεχωριστά, στο τρέχον σημείο.</li>
+        <li>Ο πίνακας στην ενότητα 02 αναλύει το κάθε επίδομα ξεχωριστά, στο τρέχον σημείο.</li>
       </ul>
     </div>
 
@@ -85,12 +85,88 @@
           </div>
         </div>
       </div>
+
+      <div class="whatif-row">
+        <span class="whatif-label">Τι θα γινόταν με αύξηση</span>
+        <div class="whatif-buttons">
+          <button type="button" class="whatif-btn" data-amount="100">+100€</button>
+          <button type="button" class="whatif-btn" data-amount="200">+200€</button>
+          <button type="button" class="whatif-btn" data-amount="500">+500€</button>
+          <button type="button" class="whatif-btn" data-amount="1000">+1.000€</button>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="section-head">
       <span class="section-num">02</span>
+      <h2>Ανάλυση επιδομάτων</h2>
+    </div>
+    <p class="section-desc">Ανάλυση επιδομάτων στο τρέχον σημείο του διαγράμματος (τρέχουσα θέση του slider).</p>
+
+    <div class="summary-card">
+      <p class="summary-insight" id="summaryInsight">—</p>
+      <div class="summary-grid">
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryNet">— €</div>
+          <div class="summary-lbl">Καθαρός μισθός</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryBenefits">— €</div>
+          <div class="summary-lbl">Επιδόματα</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryTotal">— €</div>
+          <div class="summary-lbl">Συνολικοί πόροι</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryRisk">—</div>
+          <div class="summary-lbl">Ρίσκο γκρεμού</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryNextLoss">—</div>
+          <div class="summary-lbl">Επόμενη απώλεια</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="breakdown">
+      <thead>
+        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ελάχιστο Εγγυημένο Εισόδημα</td>
+          <td><span class="status-dot" id="eeeDot"></span><span id="eeeStatus">—</span></td>
+          <td class="amount" id="eeeAmount">— €</td>
+        </tr>
+        <tr>
+          <td>Επίδομα παιδιού (Α21)</td>
+          <td><span class="status-dot" id="a21Dot"></span><span id="a21Status">—</span></td>
+          <td class="amount" id="a21Amount">— €</td>
+        </tr>
+        <tr>
+          <td>Επίδομα ενοικίου</td>
+          <td><span class="status-dot" id="rentDot"></span><span id="rentStatus">—</span></td>
+          <td class="amount" id="rentAmount">— €</td>
+        </tr>
+        <tr>
+          <td>Κοινωνικό Οικιακό Τιμολόγιο (ρεύμα)</td>
+          <td><span class="status-dot" id="kotDot"></span><span id="kotStatus">—</span></td>
+          <td class="amount" id="kotAmount">— €</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="benefit-total">
+      <span>Σύνολο επιδομάτων <em>(μηνιαίως)</em></span>
+      <span class="amount" id="benefitTotalAmount">— €</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
       <h2>Στοιχεία σου</h2>
     </div>
     <p class="section-desc">Η σύνθεση νοικοκυριού τροφοδοτεί απευθείας το διάγραμμα. Για ζευγάρια, ο μισθός του συζύγου παραμένει σταθερός ενώ σέρνεις το slider για το άτομο 1. Η ακίνητη περιουσία και οι καταθέσεις καθορίζουν αν δικαιούσαι καθόλου ΕΕΕ ή επίδομα ενοικίου — ανεξάρτητα από το εισόδημα.</p>
@@ -141,46 +217,6 @@
         <input type="number" id="kwhValue" value="300" min="0" step="10">
         <div class="hint">εκτίμηση, μπορείς να την αλλάξεις — επηρεάζει το ΚΟΤ</div>
       </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <span class="section-num">03</span>
-      <h2>Ανάλυση επιδομάτων</h2>
-    </div>
-    <p class="section-desc">Ανάλυση επιδομάτων στο τρέχον σημείο του διαγράμματος (τρέχουσα θέση του slider).</p>
-
-    <table class="breakdown">
-      <thead>
-        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Ελάχιστο Εγγυημένο Εισόδημα</td>
-          <td><span class="status-dot" id="eeeDot"></span><span id="eeeStatus">—</span></td>
-          <td class="amount" id="eeeAmount">— €</td>
-        </tr>
-        <tr>
-          <td>Επίδομα παιδιού (Α21)</td>
-          <td><span class="status-dot" id="a21Dot"></span><span id="a21Status">—</span></td>
-          <td class="amount" id="a21Amount">— €</td>
-        </tr>
-        <tr>
-          <td>Επίδομα ενοικίου</td>
-          <td><span class="status-dot" id="rentDot"></span><span id="rentStatus">—</span></td>
-          <td class="amount" id="rentAmount">— €</td>
-        </tr>
-        <tr>
-          <td>Κοινωνικό Οικιακό Τιμολόγιο (ρεύμα)</td>
-          <td><span class="status-dot" id="kotDot"></span><span id="kotStatus">—</span></td>
-          <td class="amount" id="kotAmount">— €</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="benefit-total">
-      <span>Σύνολο επιδομάτων <em>(μηνιαίως)</em></span>
-      <span class="amount" id="benefitTotalAmount">— €</span>
     </div>
   </section>
 

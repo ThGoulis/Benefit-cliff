@@ -314,12 +314,49 @@
     line-height:1;
   }
   .readout .num.drop-color{ color: var(--drop); }
+  .readout .num.gain-color{ color: var(--contour); }
+  .readout .num.warn-color{ color: var(--hazard); }
   .readout .lbl{
     font-size: 10.5px;
     color: var(--ink-faint);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
+
+  .whatif-row{
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .whatif-label{
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex: none;
+  }
+  .whatif-buttons{
+    display:flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .whatif-btn{
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--contour);
+    background: transparent;
+    border: 1px solid var(--contour-soft);
+    border-radius: 999px;
+    padding: 5px 13px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .whatif-btn:hover{ background: var(--contour); color: var(--paper-card); }
 
   /* ---------- Section shell ---------- */
   .section{
@@ -402,6 +439,48 @@
     font-size: 10.5px;
     color: var(--ink-faint);
     margin-top: 6px;
+  }
+
+  /* ---------- Executive summary card ---------- */
+  .summary-card{
+    background: var(--paper-card);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .summary-insight{
+    margin: 0 0 16px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .summary-insight.warn-color{ color: var(--hazard); }
+  .summary-insight.drop-color{ color: var(--drop); }
+  .summary-insight.gain-color{ color: var(--contour); }
+  .summary-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px,1fr));
+    gap: 16px;
+  }
+  .summary-stat{ text-align:left; }
+  .summary-num{
+    font-family:'Newsreader', serif;
+    font-size: 19px;
+    font-weight: 500;
+    line-height:1.15;
+  }
+  .summary-num.gain-color{ color: var(--contour); }
+  .summary-num.warn-color{ color: var(--hazard); }
+  .summary-num.drop-color{ color: var(--drop); }
+  .summary-lbl{
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
   }
 
   /* ---------- Breakdown table (placeholder) ---------- */

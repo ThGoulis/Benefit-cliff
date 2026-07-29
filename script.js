@@ -236,6 +236,13 @@
   const kotStatusEl = document.getElementById('kotStatus');
   const kotDotEl = document.getElementById('kotDot');
   const benefitTotalAmountEl = document.getElementById('benefitTotalAmount');
+  const summaryInsightEl = document.getElementById('summaryInsight');
+  const summaryNetEl = document.getElementById('summaryNet');
+  const summaryBenefitsEl = document.getElementById('summaryBenefits');
+  const summaryTotalEl = document.getElementById('summaryTotal');
+  const summaryRiskEl = document.getElementById('summaryRisk');
+  const summaryNextLossEl = document.getElementById('summaryNextLoss');
+  const whatifButtons = document.querySelectorAll('.whatif-btn');
 
   let samples = [];      // { gross, total, eee, a21, netMonthly }
   let yMin = 0, yMax = 1;
@@ -349,6 +356,29 @@
     yMax = rawMax + pad;
   }
 
+  // Ψάχνει μπροστά από το τρέχον σημείο (μέσα στα ήδη υπολογισμένα samples)
+  // για τον πρώτο γκρεμό — ίδιο κατώφλι (>8€) με αυτό που σχεδιάζει η καμπύλη.
+  function findNextCliff(currentGross){
+    for(let i = 1; i < samples.length; i++){
+      if(samples[i].gross <= currentGross) continue;
+      const drop = samples[i - 1].total - samples[i].total;
+      if(drop > 8){
+        return { distance: samples[i].gross - currentGross, dropAmount: drop };
+      }
+    }
+    return null;
+  }
+
+  // Επιστρέφει το σύνολο σε ένα δεδομένο μεικτό εισόδημα, παρεμβάλλοντας
+  // ανάμεσα στα κοντινότερα δείγματα — χρησιμοποιείται για να δείξουμε πόσο
+  // "κρατάει" ο χρήστης από μια υποθετική αύξηση +100€.
+  function totalAtGross(targetGross){
+    const clamped = Math.max(MIN_GROSS, Math.min(MAX_GROSS, targetGross));
+    let idx = Math.round((clamped - MIN_GROSS) / STEP);
+    idx = Math.max(0, Math.min(samples.length - 1, idx));
+    return samples[idx].total;
+  }
+
   function drawCurve(){
     const d = samples.map((s, i) => (i === 0 ? 'M' : 'L') + xFor(s.gross).toFixed(1) + ',' + yFor(s.total).toFixed(1)).join(' ');
     curvePath.setAttribute('d', d);
@@ -395,12 +425,15 @@
     if(showDelta && lastTotal !== null){
       const delta = Math.round(r.total - lastTotal);
       deltaReadout.textContent = (delta >= 0 ? '+' : '') + delta + ' €';
-      deltaReadout.classList.toggle('drop-color', delta < 0);
+      deltaReadout.classList.remove('drop-color', 'gain-color', 'warn-color');
+      if(delta < 0) deltaReadout.classList.add('drop-color');
+      else if(delta > 0 && delta < STEP * 0.7) deltaReadout.classList.add('warn-color');
+      else if(delta > 0) deltaReadout.classList.add('gain-color');
     } else {
       // Παράμετρος άλλαξε (νοικοκυριό/σύζυγος), όχι το slider — δεν είναι
       // πραγματικό "βήμα" εισοδήματος, άρα δεν δείχνουμε ψευδή μεταβολή.
       deltaReadout.textContent = '—';
-      deltaReadout.classList.remove('drop-color');
+      deltaReadout.classList.remove('drop-color', 'gain-color', 'warn-color');
     }
     lastTotal = r.total;
 
@@ -422,6 +455,52 @@
     kotDotEl.className = 'status-dot ' + (r.kot > 0 ? 'active' : 'off');
 
     benefitTotalAmountEl.textContent = fmt(Math.round(r.eee) + Math.round(r.a21) + Math.round(r.rent) + Math.round(r.kot));
+
+    // --- Executive summary (#10) ---
+    const benefitsSum = Math.round(r.eee) + Math.round(r.a21) + Math.round(r.rent) + Math.round(r.kot);
+    summaryNetEl.textContent = fmt(r.netMonthly);
+    summaryBenefitsEl.textContent = fmt(benefitsSum);
+    summaryTotalEl.textContent = fmt(r.total);
+
+    const nextCliff = findNextCliff(gross);
+
+    // Πόσο "κρατάει" ο χρήστης από μια υποθετική αύξηση +100€ από εδώ
+    const totalNow = totalAtGross(gross);
+    const totalPlus100 = totalAtGross(gross + 100);
+    const retained = totalPlus100 - totalNow;
+    const ratio = retained / 100;
+
+    // Μία κοινή "σοβαρότητα" για ρίσκο + insight, ώστε να μη δείχνουν
+    // αντιφατικά πράγματα (π.χ. "καμία αύξηση δεν σε ωφελεί" σε πράσινο ρίσκο).
+    const cliffImminent = nextCliff && nextCliff.distance <= 100;
+    const cliffNear = nextCliff && nextCliff.distance <= 400;
+    let severity;
+    if(cliffImminent || ratio < 0.3) severity = 'high';
+    else if(cliffNear || ratio < 0.7) severity = 'medium';
+    else severity = 'low';
+
+    const severityClass = { high: 'drop-color', medium: 'warn-color', low: 'gain-color' }[severity];
+    const riskLabel = { high: 'Υψηλό', medium: 'Μέτριο', low: 'Χαμηλό' }[severity];
+
+    summaryRiskEl.classList.remove('gain-color', 'warn-color', 'drop-color');
+    summaryRiskEl.textContent = riskLabel;
+    summaryRiskEl.classList.add(severityClass);
+
+    summaryNextLossEl.classList.remove('gain-color', 'warn-color', 'drop-color');
+    summaryNextLossEl.textContent = nextCliff ? `+${nextCliff.distance}€ → -${Math.round(nextCliff.dropAmount)}€` : 'Κανένας κοντινός';
+    summaryNextLossEl.classList.add(severityClass);
+
+    summaryInsightEl.classList.remove('gain-color', 'warn-color', 'drop-color');
+    summaryInsightEl.classList.add(severityClass);
+    if(cliffImminent){
+      summaryInsightEl.textContent = `Προσοχή: σε ${nextCliff.distance}€ ακόμα μεικτό, χάνεις ${Math.round(nextCliff.dropAmount)}€ σε επίδομα.`;
+    } else if(ratio < 0.3){
+      summaryInsightEl.textContent = `Σχεδόν καμία αύξηση μισθού δεν φτάνει τελικά στην τσέπη σου εδώ — μόνο ${Math.round(retained)}€ από κάθε 100€.`;
+    } else if(severity === 'medium'){
+      summaryInsightEl.textContent = `Μέρος της αύξησης μισθού αντισταθμίζεται από απώλεια επιδομάτων εδώ — κρατάς ${Math.round(retained)}€ από κάθε 100€.`;
+    } else {
+      summaryInsightEl.textContent = `Σε αυτό το εύρος, οι αυξήσεις μισθού πηγαίνουν σχεδόν ολόκληρες στην τσέπη σου — ${Math.round(retained)}€ από κάθε 100€.`;
+    }
   }
 
   function update(){ render(true); }
@@ -440,6 +519,15 @@
   householdSelect.addEventListener('change', rebuildAll);
   ageSelect1.addEventListener('change', rebuildAll);
   ageSelect2.addEventListener('change', rebuildAll);
+
+  whatifButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const amount = parseFloat(btn.dataset.amount) || 0;
+      const target = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFloat(slider.value) + amount));
+      slider.value = target;
+      update();
+    });
+  });
 
   applyLayout();
   rebuildAll();
