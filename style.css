@@ -166,7 +166,7 @@
 
   /* ---------- Hero ---------- */
   .hero{
-    padding: 56px 0 40px;
+    padding: 56px 0 12px;
   }
   .intro-card{
     position: relative;
@@ -242,23 +242,11 @@
 
   /* ---------- Chart card ---------- */
   .chart-card{
-    margin-top: 36px;
     background: var(--paper-card);
     border: 1px solid var(--line-strong);
     border-radius: var(--radius);
     padding: 28px 28px 18px;
     position: relative;
-  }
-  .chart-card::before{
-    content:"01 — ΔΙΑΓΡΑΜΜΑ";
-    position:absolute;
-    top: -10px; left: 24px;
-    background: var(--paper);
-    padding: 0 8px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink-faint);
-    font-weight: 600;
   }
   .chart-head{
     display:flex;
@@ -718,7 +706,7 @@
   }
 
   @media (max-width: 640px){
-    .hero{ padding: 40px 0 28px; }
+    .hero{ padding: 40px 0 10px; }
     .chart-card{ padding: 20px 16px 14px; }
     .readouts{ gap: 16px; }
   }

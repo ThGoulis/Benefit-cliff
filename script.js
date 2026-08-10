@@ -739,6 +739,14 @@
     setTheme(!isDark, true);
   });
 
+  const introCard = document.getElementById('introCard');
+  const INTRO_DISMISSED_KEY = 'chartis-eisodimatos-intro-dismissed';
+
+  try{
+    if(localStorage.getItem(INTRO_DISMISSED_KEY) === '1') introCard.style.display = 'none';
+  }catch(e){}
+
   document.getElementById('introCloseBtn').addEventListener('click', () => {
-    document.getElementById('introCard').style.display = 'none';
+    introCard.style.display = 'none';
+    try{ localStorage.setItem(INTRO_DISMISSED_KEY, '1'); }catch(e){}
   });
