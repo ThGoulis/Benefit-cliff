@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20260811">
 </head>
 <body>
 
@@ -59,145 +59,21 @@
       <button class="intro-close" id="introCloseBtn" aria-label="Κλείσιμο">×</button>
       <div class="intro-eyebrow">Πώς να το διαβάσεις</div>
       <ul class="intro-list">
-        <li>Διάλεξε <strong>σύνθεση νοικοκυριού</strong> και ηλικία(-ες) στην ενότητα 03.</li>
+        <li>Διάλεξε <strong>σύνθεση νοικοκυριού</strong> και ηλικία(-ες) στην ενότητα 01.</li>
         <li>Σύρε το <strong>slider</strong> στο διάγραμμα — βλέπεις πώς αλλάζει το πραγματικό καθαρό διαθέσιμο εισόδημα, όχι μόνο ο μισθός.</li>
         <li>Τα <strong>⚠ σημάδια</strong> στο διάγραμμα δείχνουν απότομες πτώσεις — σημεία όπου η αύξηση μισθού σου κοστίζει επίδομα.</li>
-        <li>Ο πίνακας στην ενότητα 02 αναλύει το κάθε επίδομα ξεχωριστά, στο τρέχον σημείο.</li>
+        <li>Ο πίνακας στην ενότητα 03 αναλύει το κάθε επίδομα ξεχωριστά, στο τρέχον σημείο.</li>
       </ul>
     </div>
 
     <div class="eyebrow">Μισθός &amp; επιδόματα</div>
     <h1>Ο πλήρης <em>χάρτης</em> του εισοδήματός σου</h1>
     <p class="lede">Σύρε τον μισθό σου και δες πώς αλλάζουν τα επιδόματά σου, σε πραγματικό χρόνο.</p>
-
-    <div class="chart-card">
-      <div class="chart-head">
-        <h2>Καθαρό διαθέσιμο εισόδημα ανά επίπεδο μεικτού μισθού</h2>
-        <span class="axis-label" id="axisLabel">ζευγάρι με 2 παιδιά</span>
-      </div>
-
-      <svg class="curve" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" id="curveSvg">
-        <!-- gridlines/axes/labels are generated in JS so the layout can adapt to viewport width -->
-        <g id="chromeLayer"></g>
-
-        <!-- cliff markers get inserted here dynamically -->
-        <g id="cliffLayer"></g>
-
-        <!-- the curve itself, drawn dynamically -->
-        <path id="curvePath" class="curve-path" d="" />
-
-        <!-- moving marker -->
-        <circle id="movingMarker" class="marker" cx="60" cy="235" r="5.5"/>
-      </svg>
-
-      <div class="slider-row">
-        <div class="income-input-row">
-          <label for="grossIncomeInput">Μεικτό εισόδημα (άτομο 1)</label>
-          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        </div>
-        <label for="incomeSlider">Σύρε το μεικτό εισόδημα</label>
-        <input type="range" id="incomeSlider" min="200" max="3500" value="200" step="10">
-        <div class="readouts">
-          <div class="readout">
-            <div class="num" id="netReadout">690 €</div>
-            <div class="lbl">Καθαρό διαθέσιμο εισόδημα</div>
-          </div>
-          <div class="readout">
-            <div class="num drop-color" id="deltaReadout">—</div>
-            <div class="lbl">Μεταβολή από προηγούμενο βήμα</div>
-          </div>
-          <div class="readout">
-            <div class="num" id="e1Readout">— €</div>
-            <div class="lbl">Ετήσιο ακαθάριστο εισόδημα</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="whatif-row">
-        <span class="whatif-label">Τι θα γινόταν με</span>
-        <div class="whatif-buttons">
-          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-1000">−1.000€</button>
-          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-500">−500€</button>
-          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-200">−200€</button>
-          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-100">−100€</button>
-          <button type="button" class="whatif-btn" data-amount="100">+100€</button>
-          <button type="button" class="whatif-btn" data-amount="200">+200€</button>
-          <button type="button" class="whatif-btn" data-amount="500">+500€</button>
-          <button type="button" class="whatif-btn" data-amount="1000">+1.000€</button>
-        </div>
-      </div>
-    </div>
   </section>
 
   <section class="section">
     <div class="section-head">
-      <span class="section-num">02</span>
-      <h2>Ανάλυση επιδομάτων</h2>
-    </div>
-    <p class="section-desc">Ανάλυση επιδομάτων στο τρέχον σημείο του διαγράμματος (τρέχουσα θέση του slider).</p>
-
-    <div class="summary-card">
-      <p class="summary-insight" id="summaryInsight">—</p>
-      <div class="summary-grid">
-        <div class="summary-stat">
-          <div class="summary-num" id="summaryNet">— €</div>
-          <div class="summary-lbl">Καθαρός μισθός</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-num" id="summaryBenefits">— €</div>
-          <div class="summary-lbl">Επιδόματα</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-num" id="summaryTotal">— €</div>
-          <div class="summary-lbl">Συνολικοί πόροι</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-num" id="summaryRisk">—</div>
-          <div class="summary-lbl">Ρίσκο γκρεμού</div>
-        </div>
-        <div class="summary-stat">
-          <div class="summary-num" id="summaryNextLoss">—</div>
-          <div class="summary-lbl">Επόμενη απώλεια</div>
-        </div>
-      </div>
-    </div>
-
-    <table class="breakdown">
-      <thead>
-        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Ελάχιστο Εγγυημένο Εισόδημα</td>
-          <td><span class="status-dot" id="eeeDot"></span><span id="eeeStatus">—</span></td>
-          <td class="amount" id="eeeAmount">— €</td>
-        </tr>
-        <tr>
-          <td>Επίδομα παιδιού (Α21)</td>
-          <td><span class="status-dot" id="a21Dot"></span><span id="a21Status">—</span></td>
-          <td class="amount" id="a21Amount">— €</td>
-        </tr>
-        <tr>
-          <td>Επίδομα ενοικίου</td>
-          <td><span class="status-dot" id="rentDot"></span><span id="rentStatus">—</span></td>
-          <td class="amount" id="rentAmount">— €</td>
-        </tr>
-        <tr>
-          <td>Κοινωνικό Οικιακό Τιμολόγιο (ρεύμα)</td>
-          <td><span class="status-dot" id="kotDot"></span><span id="kotStatus">—</span></td>
-          <td class="amount" id="kotAmount">— €</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="benefit-total">
-      <span>Σύνολο επιδομάτων <em>(μηνιαίως)</em></span>
-      <span class="amount" id="benefitTotalAmount">— €</span>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <span class="section-num">03</span>
+      <span class="section-num">01</span>
       <h2>Στοιχεία σου</h2>
     </div>
     <p class="section-desc">Η σύνθεση νοικοκυριού τροφοδοτεί απευθείας το διάγραμμα. Για ζευγάρια, ο μισθός του συζύγου παραμένει σταθερός ενώ σέρνεις το slider για το άτομο 1. Η ακίνητη περιουσία και οι καταθέσεις καθορίζουν αν δικαιούσαι καθόλου ΕΕΕ ή επίδομα ενοικίου — ανεξάρτητα από το εισόδημα.</p>
@@ -266,6 +142,136 @@
   </section>
 
   <section class="section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>Διάγραμμα</h2>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h2>Καθαρό διαθέσιμο εισόδημα ανά επίπεδο μεικτού μισθού</h2>
+        <span class="axis-label" id="axisLabel">ζευγάρι με 2 παιδιά</span>
+      </div>
+
+      <svg class="curve" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" id="curveSvg">
+        <!-- gridlines/axes/labels are generated in JS so the layout can adapt to viewport width -->
+        <g id="chromeLayer"></g>
+
+        <!-- cliff markers get inserted here dynamically -->
+        <g id="cliffLayer"></g>
+
+        <!-- the curve itself, drawn dynamically -->
+        <path id="curvePath" class="curve-path" d="" />
+
+        <!-- moving marker -->
+        <circle id="movingMarker" class="marker" cx="60" cy="235" r="5.5"/>
+      </svg>
+
+      <div class="slider-row">
+        <div class="income-input-row">
+          <label for="grossIncomeInput">Μεικτό εισόδημα (άτομο 1)</label>
+          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <label for="incomeSlider">Σύρε το μεικτό εισόδημα</label>
+        <input type="range" id="incomeSlider" min="200" max="3500" value="200" step="10">
+        <div class="readouts">
+          <div class="readout">
+            <div class="num" id="netReadout">690 €</div>
+            <div class="lbl">Καθαρό διαθέσιμο εισόδημα</div>
+          </div>
+          <div class="readout">
+            <div class="num drop-color" id="deltaReadout">—</div>
+            <div class="lbl">Μεταβολή από προηγούμενο βήμα</div>
+          </div>
+          <div class="readout">
+            <div class="num" id="e1Readout">— €</div>
+            <div class="lbl">Ετήσιο ακαθάριστο εισόδημα</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="whatif-row">
+        <span class="whatif-label">Τι θα γινόταν με</span>
+        <div class="whatif-buttons">
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-1000">−1.000€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-500">−500€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-200">−200€</button>
+          <button type="button" class="whatif-btn whatif-btn-neg" data-amount="-100">−100€</button>
+          <button type="button" class="whatif-btn" data-amount="100">+100€</button>
+          <button type="button" class="whatif-btn" data-amount="200">+200€</button>
+          <button type="button" class="whatif-btn" data-amount="500">+500€</button>
+          <button type="button" class="whatif-btn" data-amount="1000">+1.000€</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>Ανάλυση επιδομάτων</h2>
+    </div>
+    <p class="section-desc">Ανάλυση επιδομάτων στο τρέχον σημείο του διαγράμματος (τρέχουσα θέση του slider).</p>
+
+    <div class="summary-card">
+      <p class="summary-insight" id="summaryInsight">—</p>
+      <div class="summary-grid">
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryNet">— €</div>
+          <div class="summary-lbl">Καθαρός μισθός</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryBenefits">— €</div>
+          <div class="summary-lbl">Επιδόματα</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryTotal">— €</div>
+          <div class="summary-lbl">Συνολικοί πόροι</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryRisk">—</div>
+          <div class="summary-lbl">Ρίσκο γκρεμού</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-num" id="summaryNextLoss">—</div>
+          <div class="summary-lbl">Επόμενη απώλεια</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="breakdown">
+      <thead>
+        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ελάχιστο Εγγυημένο Εισόδημα</td>
+          <td><span class="status-dot" id="eeeDot"></span><span id="eeeStatus">—</span></td>
+          <td class="amount" id="eeeAmount">— €</td>
+        </tr>
+        <tr>
+          <td>Επίδομα παιδιού (Α21)</td>
+          <td><span class="status-dot" id="a21Dot"></span><span id="a21Status">—</span></td>
+          <td class="amount" id="a21Amount">— €</td>
+        </tr>
+        <tr>
+          <td>Επίδομα ενοικίου</td>
+          <td><span class="status-dot" id="rentDot"></span><span id="rentStatus">—</span></td>
+          <td class="amount" id="rentAmount">— €</td>
+        </tr>
+        <tr>
+          <td>Κοινωνικό Οικιακό Τιμολόγιο (ρεύμα)</td>
+          <td><span class="status-dot" id="kotDot"></span><span id="kotStatus">—</span></td>
+          <td class="amount" id="kotAmount">— €</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="benefit-total">
+      <span>Σύνολο επιδομάτων <em>(μηνιαίως)</em></span>
+      <span class="amount" id="benefitTotalAmount">— €</span>
+    </div>
+  </section>
+
+  <section class="section">
     <details class="methodology">
       <summary>Σημειώσεις μεθοδολογίας &amp; παραδοχές</summary>
       <p class="methodology-intro">Πραγματικοί υπολογισμοί μισθού, ΕΕΕ, Α21, επίδομα ενοικίου, ΚΟΤ &amp; περιουσιακά κριτήρια — δες τις παραδοχές πιο κάτω.</p>
@@ -273,8 +279,8 @@
         <li>Ο καθαρός μισθός υπολογίζεται με βάση το σύστημα 14 μισθών (ΕΦΚΑ, κλίμακα φόρου ανά ηλικία, φορολογική έκπτωση) — μόνο η περίπτωση μισθωτού, όχι μπλοκάκι/ελεύθερος επαγγελματίας.</li>
         <li>Τα ΕΕΕ, Α21 και επίδομα ενοικίου βασίζονται στα επίσημα ποσά/κλιμάκια όπως τα βρήκαμε. Το ΕΕΕ και το επίδομα ενοικίου περιλαμβάνουν πλέον περιουσιακά κριτήρια (ακίνητη περιουσία, καταθέσεις) — <strong>χωρίς</strong> αντικειμενική δαπάνη ΙΧ/δικύκλων ή περιουσιακό τεκμήριο τόκων, που αγνοούνται για απλότητα.</li>
         <li>Το επίδομα ενοικίου βρίσκεται πιθανώς σε φάση αναθεώρησης (νομοσχέδιο υπό συζήτηση) — τα κριτήρια που χρησιμοποιούμε είναι τα πιο πρόσφατα επιβεβαιωμένα, όχι εγγυημένα οριστικά.</li>
-        <li>Η φορολογική έκπτωση (777/810/900€) αποδίδεται πάντα στο άτομο 1 σε ζευγάρια, όχι μοιρασμένη.</li>
-        <li>Υποστηρίζεται μέχρι 2 παιδιά και ένα δεύτερο εισόδημα (σύζυγος) σταθερό, όχι μεταβλητό στο διάγραμμα.</li>
+        <li>Η φορολογική έκπτωση (777-1.780€+ ανάλογα τα παιδιά) αποδίδεται πάντα στο άτομο 1 σε ζευγάρια, όχι μοιρασμένη.</li>
+        <li>Υποστηρίζεται οποιοσδήποτε αριθμός παιδιών· ένα δεύτερο εισόδημα (σύζυγος) μένει σταθερό, όχι μεταβλητό στο διάγραμμα.</li>
         <li>Το Κοινωνικό Οικιακό Τιμολόγιο (ΚΟΤ) μοντελοποιεί μόνο τη βασική κατηγορία Β (4,5 λεπτά/kWh, όριο 350kWh/μήνα) — όχι τις κατηγορίες Α (ευάλωτες ομάδες, +8.000€/+15.000€ όριο για ΑΜΕΑ/μηχανική υποστήριξη) ή Γ (πολύτεκνοι). Η κατανάλωση ρεύματος εισάγεται ως εκτίμηση, όχι πραγματικά στοιχεία λογαριασμού.</li>
       </ul>
     </details>
@@ -287,7 +293,7 @@
 
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=20260811"></script>
 
 </body>
 </html>
