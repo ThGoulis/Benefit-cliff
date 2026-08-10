@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="el" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Επιδόματα &amp; Ενισχύσεις στην Ελλάδα — Πλήρης Οδηγός | Χάρτης Εισοδήματος</title>
+<meta name="description" content="Όλα τα επιδόματα και οικονομικές ενισχύσεις στην Ελλάδα σε ένα σημείο — ΟΠΕΚΑ, ΔΥΠΑ, e-ΕΦΚΑ και έκτακτες ενισχύσεις. Τι είναι, ποιος δικαιούται, πόσο είναι το ποσό.">
+<link rel="canonical" href="https://thgoulis.github.io/Benefit-cliff/epidomata.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B2420'/%3E%3Crect x='7' y='9' width='18' height='3.4' rx='1.7' fill='%234FC2AE'/%3E%3Crect x='7' y='14.3' width='18' height='3.4' rx='1.7' fill='%234FC2AE'/%3E%3Crect x='7' y='19.6' width='18' height='3.4' rx='1.7' fill='%234FC2AE'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Στυλ ειδικά για αυτή τη σελίδα αναφοράς — προσθέτει πάνω στο style.css, δεν το αντικαθιστά */
+  .ref-hero{ padding: 48px 0 8px; }
+  .ref-hero h1{
+    font-family:'Newsreader', serif; font-weight:500; font-size: clamp(26px, 4vw, 36px);
+    margin: 0 0 12px; max-width: 20ch;
+  }
+  .ref-hero p{ color: var(--ink-soft); font-size: 15px; max-width: 60ch; margin: 0 0 8px; }
+  .ref-note{
+    font-size: 12.5px; color: var(--ink-faint); margin: 4px 0 32px;
+    border-left: 2px solid var(--contour-soft); padding-left: 10px;
+  }
+
+  .agency-group{
+    background: var(--paper-card); border: 1px solid var(--line-strong); border-radius: var(--radius);
+    margin-bottom: 12px; overflow: hidden;
+  }
+  .agency-group summary{
+    cursor: pointer; padding: 16px 18px; font-weight: 600; font-size: 14px;
+    display:flex; align-items:center; gap: 10px; list-style: none;
+  }
+  .agency-group summary::-webkit-details-marker{ display:none; }
+  .agency-group summary::before{ content:"▸"; color: var(--contour); font-size: 11px; transition: transform .15s ease; flex: none; }
+  .agency-group[open] summary::before{ transform: rotate(90deg); }
+  .agency-group summary .agency-full{ color: var(--ink-faint); font-weight: 400; font-size: 12.5px; }
+  .agency-badge{
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--contour); background: rgba(61,163,148,0.12); padding: 3px 8px; border-radius: 999px; flex: none;
+  }
+
+  .agency-row{
+    padding: 14px 18px; border-top: 1px solid var(--line);
+    display:flex; justify-content:space-between; gap:16px; align-items:flex-start;
+  }
+  .agency-row .name{ font-weight: 500; font-size: 13.5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .agency-row .desc{ color: var(--ink-faint); font-size: 12px; margin-top: 4px; max-width: 56ch; }
+  .agency-row .amount{
+    font-family:'Newsreader', serif; font-size: 14.5px; color: var(--contour); flex: none;
+    white-space: nowrap; text-align:right;
+  }
+  .in-tool-tag{
+    font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--hazard); border: 1px solid var(--hazard); border-radius: 999px; padding: 1px 7px;
+  }
+  .agency-row a.tool-link{
+    display:inline-block; margin-top: 6px; font-size: 12px; color: var(--contour); font-weight: 600; text-decoration:none;
+  }
+  .agency-row a.tool-link:hover{ text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="mark"></span> Χάρτης Εισοδήματος</div>
+    <nav>
+      <a href="index.html">Εργαλείο</a>
+      <a href="https://github.com/ThGoulis/Benefit-cliff/blob/main/TECHNICAL.md" target="_blank" rel="noopener">Πηγές</a>
+      <button id="themeToggle" type="button" aria-pressed="false">
+        <span class="tt-icon" aria-hidden="true">☾</span>
+        <span class="tt-label">Σκούρο θέμα</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="ref-hero">
+    <h1>Επιδόματα &amp; ενισχύσεις στην Ελλάδα — πλήρης οδηγός</h1>
+    <p>Συγκεντρωτική λίστα όλων των βασικών επιδομάτων, ομαδοποιημένη ανά φορέα. Τα 4 που σημειώνονται "Στο εργαλείο" τα μοντελοποιούμε πλήρως — μπορείς να δεις πώς αλληλεπιδρούν με τον μισθό σου σε πραγματικό χρόνο.</p>
+    <p class="ref-note">Ενδεικτική περιγραφή/ποσά — για ακριβή στοιχεία και πιο πρόσφατα κριτήρια, δες πάντα gov.gr ή τον αρμόδιο φορέα.</p>
+  </section>
+
+  <!-- ΟΠΕΚΑ -->
+  <details class="agency-group" open>
+    <summary><span class="agency-badge">ΟΠΕΚΑ</span> Προνοιακά &amp; Οικογενειακά Επιδόματα <span class="agency-full">— Οργανισμός Προνοιακών Επιδομάτων &amp; Κοινωνικής Αλληλεγγύης</span></summary>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Ελάχιστο Εγγυημένο Εισόδημα (ΕΕΕ) <span class="in-tool-tag">Στο εργαλείο</span></div>
+        <div class="desc">Μηνιαία εισοδηματική ενίσχυση για νοικοκυριά σε συνθήκες ακραίας φτώχειας.</div>
+        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+      </div>
+      <div class="amount">έως 972€/μήνα</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Παιδιού (Α21) <span class="in-tool-tag">Στο εργαλείο</span></div>
+        <div class="desc">Ανά διμηνία, ανάλογα με το ισοδύναμο οικογενειακό εισόδημα και τον αριθμό εξαρτώμενων τέκνων.</div>
+        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+      </div>
+      <div class="amount">28-140€/μήνα ανά τέκνο</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Στέγασης (Ενοικίου) <span class="in-tool-tag">Στο εργαλείο</span></div>
+        <div class="desc">Για νοικοκυριά που μισθώνουν την κύρια κατοικία τους, με εισοδηματικά και περιουσιακά κριτήρια.</div>
+        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+      </div>
+      <div class="amount">70-210€/μήνα</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Γέννησης</div>
+        <div class="desc">Εφάπαξ βοήθημα σε 2 δόσεις για κάθε νέα γέννηση, κλιμακούμενο ανάλογα με τη σειρά γέννησης.</div>
+      </div>
+      <div class="amount">2.400–3.500€</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Αναπηρικά / Προνοιακά Επιδόματα</div>
+        <div class="desc">Τακτικά μηνιαία επιδόματα για άτομα με αναπηρία (κινητική, νοητική, οπτική, ακοής, βαριά αναπηρία κ.ά.).</div>
+      </div>
+      <div class="amount">ανά κατηγορία</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Ανασφάλιστων Υπερηλίκων</div>
+        <div class="desc">Μηνιαίο βοήθημα για άτομα άνω των 67 ετών που δεν θεμελιώνουν συνταξιοδοτικό δικαίωμα.</div>
+      </div>
+      <div class="amount">μηνιαίο</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Ορεινών &amp; Μειονεκτικών Περιοχών</div>
+        <div class="desc">Ετήσια ενίσχυση για οικογένειες που κατοικούν μόνιμα σε ορεινές ή μειονεκτικές περιοχές.</div>
+      </div>
+      <div class="amount">ετήσιο</div>
+    </div>
+  </details>
+
+  <!-- ΔΥΠΑ -->
+  <details class="agency-group">
+    <summary><span class="agency-badge">ΔΥΠΑ</span> Επιδόματα Απασχόλησης &amp; Ανεργίας <span class="agency-full">— πρώην ΟΑΕΔ</span></summary>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Τακτικό Επίδομα Ανεργίας</div>
+        <div class="desc">Για μισθωτούς των οποίων η σύμβαση καταγγέλθηκε ή έληξε, εφόσον συμπληρώνουν τις απαιτούμενες ημέρες ασφάλισης.</div>
+      </div>
+      <div class="amount">ανά περίπτωση</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Μακροχρονίως Ανέργων</div>
+        <div class="desc">Για εγγεγραμμένους ανέργους που παραμένουν στα μητρώα πάνω από 12 μήνες και έχουν εξαντλήσει την τακτική επιδότηση.</div>
+      </div>
+      <div class="amount">μηνιαίο</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Ειδική Παροχή Προστασίας Μητρότητας</div>
+        <div class="desc">Επιδότηση 9-12 μηνών (μετά την άδεια λοχείας) για μισθωτές, αυτοαπασχολούμενες και αγρότισσες.</div>
+      </div>
+      <div class="amount">9-12 μήνες</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Βοήθημα Αυτοτελώς &amp; Ανεξαρτήτως Απασχολουμένων</div>
+        <div class="desc">Για ελεύθερους επαγγελματίες που διέκοψαν αποδεδειγμένα τη δραστηριότητά τους.</div>
+      </div>
+      <div class="amount">ανά περίπτωση</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Ειδικά Εποχικά Βοηθήματα</div>
+        <div class="desc">Εφάπαξ ενισχύσεις για εργαζόμενους σε εποχιακά επαγγέλματα (τουρισμός, επισιτισμός, οικοδομή, καλλιτέχνες κ.ά.).</div>
+      </div>
+      <div class="amount">εφάπαξ</div>
+    </div>
+  </details>
+
+  <!-- e-ΕΦΚΑ -->
+  <details class="agency-group">
+    <summary><span class="agency-badge">e-ΕΦΚΑ</span> Ασφαλιστικές Παροχές σε Χρήμα</summary>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Ασθενείας &amp; Ατυχήματος</div>
+        <div class="desc">Αποζημίωση για τις ημέρες απουσίας από την εργασία λόγω ασθένειας ή εργατικού ατυχήματος.</div>
+      </div>
+      <div class="amount">ανά περίπτωση</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Κυοφορίας &amp; Λοχείας</div>
+        <div class="desc">Καταβάλλεται σε ασφαλισμένες για το διάστημα πριν και μετά τον τοκετό (συνολικά 119 ημέρες).</div>
+      </div>
+      <div class="amount">119 ημέρες</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Εξωιδρυματικό Επίδομα</div>
+        <div class="desc">Μηνιαίο βοήθημα παραπληγίας / τετραπληγίας για ασφαλισμένους και συνταξιούχους.</div>
+      </div>
+      <div class="amount">μηνιαίο</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Εξόδων Κηδείας</div>
+        <div class="desc">Εφάπαξ χρηματικό ποσό στον φροντιστή της κηδείας θανόντος ασφαλισμένου ή συνταξιούχου.</div>
+      </div>
+      <div class="amount">εφάπαξ</div>
+    </div>
+  </details>
+
+  <!-- Έκτακτες / Λοιπά -->
+  <details class="agency-group">
+    <summary><span class="agency-badge">Gov.gr / Υπουργεία</span> Έκτακτες &amp; Ενεργειακές Ενισχύσεις</summary>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Κοινωνικό Οικιακό Τιμολόγιο (ΚΟΤ) <span class="in-tool-tag">Στο εργαλείο</span></div>
+        <div class="desc">Έκπτωση στο ηλεκτρικό ρεύμα για ευάλωτα νοικοκυριά (μοντελοποιούμε την κατηγορία Β).</div>
+        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+      </div>
+      <div class="amount">4,5 λεπτά/kWh</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Επίδομα Θέρμανσης</div>
+        <div class="desc">Ετήσιο επίδομα για δαπάνες θέρμανσης (πετρέλαιο, φυσικό αέριο, ρεύμα, καυσόξυλα κ.ά.) — εξαρτάται από κλιματική ζώνη οικισμού.</div>
+      </div>
+      <div class="amount">ανά καύσιμο/ζώνη</div>
+    </div>
+
+    <div class="agency-row">
+      <div>
+        <div class="name">Προγράμματα Vouchers</div>
+        <div class="desc">Περιοδικά προγράμματα όπως «Τουρισμός για Όλους», Youth Pass, Κοινωνικός Τουρισμός ΔΥΠΑ κ.ά.</div>
+      </div>
+      <div class="amount">περιοδικά</div>
+    </div>
+  </details>
+
+  <footer>
+    <span>Το εργαλείο παρέχεται ενδεικτικά, χωρίς καμία εγγύηση ακρίβειας — δεν αποτελεί φορολογική, νομική ή χρηματοοικονομική συμβουλή. Για αποφάσεις που σας δεσμεύουν, συμβουλευτείτε αρμόδιο επαγγελματία.</span>
+    <span>© 2026 ThGoulis · <a href="https://github.com/ThGoulis/Benefit-cliff" target="_blank" rel="noopener">GitHub</a> · <a href="https://github.com/ThGoulis/Benefit-cliff/issues" target="_blank" rel="noopener">Σχόλια / Issues</a></span>
+  </footer>
+</div>
+
+<script>
+  const themeToggle = document.getElementById('themeToggle');
+  const ttIcon = themeToggle.querySelector('.tt-icon');
+  const ttLabel = themeToggle.querySelector('.tt-label');
+
+  function setTheme(dark){
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    themeToggle.setAttribute('aria-pressed', String(dark));
+    ttIcon.textContent = dark ? '☀' : '☾';
+    ttLabel.textContent = dark ? 'Φωτεινό θέμα' : 'Σκούρο θέμα';
+  }
+
+  setTheme(true);
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    setTheme(!isDark);
+  });
+</script>
+
+</body>
+</html>
