@@ -30,17 +30,25 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="wrap">
-    <div class="brand"><span class="mark"></span> Χάρτης Εισοδήματος</div>
-    <nav>
-      <a href="epidomata.html">Άλλα επιδόματα</a>
-      <a href="https://github.com/ThGoulis/Benefit-cliff/blob/main/TECHNICAL.md" target="_blank" rel="noopener">Πηγές</a>
-      <button id="themeToggle" type="button" aria-pressed="false">
-        <span class="tt-icon" aria-hidden="true">☾</span>
-        <span class="tt-label">Σκούρο θέμα</span>
-      </button>
-    </nav>
+<div class="sticky-group">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand"><span class="mark"></span> Χάρτης Εισοδήματος</div>
+      <nav>
+        <a href="epidomata.html">Άλλα επιδόματα</a>
+        <a href="https://github.com/ThGoulis/Benefit-cliff/blob/main/TECHNICAL.md" target="_blank" rel="noopener">Πηγές</a>
+        <button id="themeToggle" type="button" aria-pressed="false">
+          <span class="tt-icon" aria-hidden="true">☾</span>
+          <span class="tt-label">Σκούρο θέμα</span>
+        </button>
+      </nav>
+    </div>
+  </div>
+  <div class="live-preview-bar" id="livePreviewBar">
+    <div class="wrap">
+      <span class="dot"></span>
+      <span class="text" id="livePreviewText">—</span>
+    </div>
   </div>
 </div>
 
@@ -194,18 +202,30 @@
     </div>
     <p class="section-desc">Η σύνθεση νοικοκυριού τροφοδοτεί απευθείας το διάγραμμα. Για ζευγάρια, ο μισθός του συζύγου παραμένει σταθερός ενώ σέρνεις το slider για το άτομο 1. Η ακίνητη περιουσία και οι καταθέσεις καθορίζουν αν δικαιούσαι καθόλου ΕΕΕ ή επίδομα ενοικίου — ανεξάρτητα από το εισόδημα.</p>
 
-    <div class="field-grid">
-      <div class="field">
-        <label>Σύνθεση νοικοκυριού</label>
-        <select id="householdSelect">
-          <option value="single">Άγαμος/η χωρίς παιδιά</option>
-          <option value="couple0">Ζευγάρι χωρίς παιδιά</option>
-          <option value="couple1">Ζευγάρι με 1 παιδί</option>
-          <option value="couple2" selected>Ζευγάρι με 2 παιδιά</option>
-          <option value="mono1">Μονογονεϊκή με 1 παιδί</option>
-          <option value="mono2">Μονογονεϊκή με 2 παιδιά</option>
-        </select>
+    <div class="household-picker">
+      <div class="field-label">Ενήλικοι στο νοικοκυριό</div>
+      <div class="adults-grid">
+        <button type="button" class="adult-card" id="adultsSingleBtn" data-spouse="false">
+          <span class="icon">🧍</span><span class="label">Χωρίς σύζυγο/σύντροφο</span>
+        </button>
+        <button type="button" class="adult-card selected" id="adultsCoupleBtn" data-spouse="true">
+          <span class="icon">👫</span><span class="label">Με σύζυγο/σύντροφο</span>
+        </button>
       </div>
+
+      <div class="field-label" style="margin-top:18px;">Πόσα παιδιά</div>
+      <div class="child-stepper">
+        <button type="button" class="child-btn" data-count="0">0</button>
+        <button type="button" class="child-btn" data-count="1">1</button>
+        <button type="button" class="child-btn selected" data-count="2">2</button>
+        <button type="button" class="child-btn" data-count="3">3</button>
+        <button type="button" class="child-btn" data-count="4">4</button>
+        <button type="button" class="child-btn" data-count="5">5+</button>
+      </div>
+      <div class="derived-tag" id="monoParentTag" style="display:none">Μονογονεϊκή οικογένεια — εφαρμόζονται οι ειδικοί κανόνες</div>
+    </div>
+
+    <div class="field-grid">
       <div class="field">
         <label>Ηλικία (άτομο 1)</label>
         <select id="ageSelect1">

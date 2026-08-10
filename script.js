@@ -33,14 +33,35 @@
     ]
   };
 
-  const HOUSEHOLDS = {
-    single:  { label: 'άγαμος/η χωρίς παιδιά', extraAdults: 0, minors: 0, hasSpouse: false, children: 0, baseCredit: 777, isSingleParent: false },
-    couple0: { label: 'ζευγάρι χωρίς παιδιά',   extraAdults: 1, minors: 0, hasSpouse: true,  children: 0, baseCredit: 777, isSingleParent: false },
-    couple1: { label: 'ζευγάρι με 1 παιδί',    extraAdults: 1, minors: 1, hasSpouse: true,  children: 1, baseCredit: 810, isSingleParent: false },
-    couple2: { label: 'ζευγάρι με 2 παιδιά',   extraAdults: 1, minors: 2, hasSpouse: true,  children: 2, baseCredit: 900, isSingleParent: false },
-    mono1:   { label: 'μονογονεϊκή με 1 παιδί', extraAdults: 0, minors: 1, hasSpouse: false, children: 1, baseCredit: 810, isSingleParent: true },
-    mono2:   { label: 'μονογονεϊκή με 2 παιδιά', extraAdults: 0, minors: 2, hasSpouse: false, children: 2, baseCredit: 900, isSingleParent: true }
-  };
+  // Το νοικοκυριό δεν είναι πια ονομαστικός πίνακας — χτίζεται δυναμικά από
+  // δύο ανεξάρτητες επιλογές: υπάρχει σύζυγος/σύντροφος, και πόσα παιδιά.
+  // Η μονογονεϊκή κατάσταση προκύπτει μόνη της (χωρίς σύζυγο + παιδιά≥1),
+  // δεν είναι ξεχωριστή επιλογή. Έτσι 3, 4, 5+ παιδιά δουλεύουν ήδη χωρίς
+  // να χρειάζεται ποτέ νέα "σύνθεση" να προστεθεί χειροκίνητα.
+  function buildHousehold(hasSpouse, children){
+    children = Math.max(0, children || 0);
+    const isSingleParent = !hasSpouse && children >= 1;
+    return {
+      extraAdults: hasSpouse ? 1 : 0,
+      minors: children,
+      hasSpouse: hasSpouse,
+      children: children,
+      isSingleParent: isSingleParent
+    };
+  }
+
+  // Φορολογική έκπτωση βάσης (άρθρο 16 ν.4172/2013, τρέχουσα εκδοχή — επιβεβαιωμένη
+  // μέσω taxheaven.gr, 2026). Γραμμένη γενικά ώστε να δουλεύει ήδη για 3+ παιδιά
+  // αν προστεθούν νέες συνθέσεις αργότερα, όχι μόνο για τις σημερινές 0-2.
+  function taxCreditBase(children){
+    if(children <= 0) return 777;
+    if(children === 1) return 900;
+    if(children === 2) return 1120;
+    if(children === 3) return 1340;
+    if(children === 4) return 1580;
+    if(children === 5) return 1780;
+    return 1780 + 220 * (children - 5);
+  }
 
   function annualTax(annualTaxable, ageBracket){
     const brackets = TAX_BRACKETS_BY_AGE[ageBracket] || TAX_BRACKETS_BY_AGE.standard;
@@ -61,11 +82,13 @@
   }
 
   function a21ChildAmount(category, children){
-    // category: 1,2,3 or 0 (εκτός ορίου)
-    const perFirstTwo = { 1: 70, 2: 42, 3: 28 }[category] || 0;
+    // category: 1,2,3 or 0 (εκτός ορίου). 1ο+2ο τέκνο: βασικό ποσό το καθένα.
+    // 3ο και κάθε επόμενο: διπλάσιο ποσό το καθένα (άρθρο 214 ν.4512/2018).
+    const perChild = { 1: 70, 2: 42, 3: 28 }[category] || 0;
     if(children <= 0) return 0;
-    if(children === 1) return perFirstTwo;
-    return perFirstTwo * 2; // v1 υποστηρίζει μέχρι 2 παιδιά
+    const firstTwo = Math.min(children, 2) * perChild;
+    const rest = Math.max(0, children - 2) * perChild * 2;
+    return firstTwo + rest;
   }
 
   // Επίδομα ενοικίου — εισοδηματικό κριτήριο. Σε μονογονεϊκή οικογένεια με
@@ -149,13 +172,12 @@
     return { netMonthly, taxableMonthly };
   }
 
-  function computeAt(grossMonthly, householdKey, spouseGrossMonthly, age1, age2, propertyValue, deposits, kwh){
-    const h = HOUSEHOLDS[householdKey];
+  function computeAt(grossMonthly, h, spouseGrossMonthly, age1, age2, propertyValue, deposits, kwh){
     const totalMembers = h.extraAdults + h.minors + 1;
     propertyValue = propertyValue || 0;
     deposits = deposits || 0;
 
-    const p1 = computeIndividual(grossMonthly, h.baseCredit, age1);
+    const p1 = computeIndividual(grossMonthly, taxCreditBase(h.children), age1);
     let netMonthly = p1.netMonthly;
     let combinedTaxableMonthly = p1.taxableMonthly;
 
@@ -240,7 +262,13 @@
   const marker = document.getElementById('movingMarker');
   const slider = document.getElementById('incomeSlider');
   const grossIncomeInput = document.getElementById('grossIncomeInput');
-  const householdSelect = document.getElementById('householdSelect');
+  const adultsSingleBtn = document.getElementById('adultsSingleBtn');
+  const adultsCoupleBtn = document.getElementById('adultsCoupleBtn');
+  const childButtons = document.querySelectorAll('.child-btn');
+  const monoParentTag = document.getElementById('monoParentTag');
+  let hasSpouseState = true;
+  let childrenState = 2;
+  function getCurrentHousehold(){ return buildHousehold(hasSpouseState, childrenState); }
   const spouseIncomeField = document.getElementById('spouseIncomeField');
   const spouseIncomeInput = document.getElementById('spouseIncome');
   const ageSelect1 = document.getElementById('ageSelect1');
@@ -266,6 +294,8 @@
   const kotDotEl = document.getElementById('kotDot');
   const benefitTotalAmountEl = document.getElementById('benefitTotalAmount');
   const summaryInsightEl = document.getElementById('summaryInsight');
+  const livePreviewBar = document.getElementById('livePreviewBar');
+  const livePreviewText = document.getElementById('livePreviewText');
   const summaryNetEl = document.getElementById('summaryNet');
   const summaryBenefitsEl = document.getElementById('summaryBenefits');
   const summaryTotalEl = document.getElementById('summaryTotal');
@@ -369,13 +399,13 @@
   }
 
   function rebuildSamples(){
-    const key = householdSelect.value;
+    const h = getCurrentHousehold();
     const sg = spouseGross();
     const age1 = ageSelect1.value, age2 = ageSelect2.value;
     const pv = getPropertyValue(), dep = getDeposits(), kwh = getKwh();
     samples = [];
     for(let g = MIN_GROSS; g <= MAX_GROSS; g += STEP){
-      const r = computeAt(g, key, sg, age1, age2, pv, dep, kwh);
+      const r = computeAt(g, h, sg, age1, age2, pv, dep, kwh);
       samples.push({ gross: g, ...r });
     }
     const totals = samples.map(s => s.total);
@@ -440,11 +470,28 @@
     }
   }
 
+  // Κοινή συνάρτηση σοβαρότητας — τη χρησιμοποιούν και το executive summary
+  // (στην τρέχουσα θέση του slider) και η sticky γραμμή προεπισκόπησης
+  // (στο ελάχιστο εισόδημα), ώστε να μη δείχνουν ποτέ αντιφατικά πράγματα.
+  function computeSeverity(gross){
+    const nextCliff = findNextCliff(gross);
+    const benefitsNow = benefitsAtGross(gross);
+    const benefitsPlus100 = benefitsAtGross(gross + 100);
+    const benefitDelta100 = benefitsPlus100 - benefitsNow;
+    const cliffImminent = nextCliff && nextCliff.distance <= 100;
+    const cliffNear = nextCliff && nextCliff.distance <= 400;
+    let severity;
+    if(cliffImminent || benefitDelta100 <= -40) severity = 'high';
+    else if(cliffNear || benefitDelta100 <= -10) severity = 'medium';
+    else severity = 'low';
+    return { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent };
+  }
+
   function render(showDelta){
     const gross = parseFloat(slider.value);
-    const h = HOUSEHOLDS[householdSelect.value];
+    const h = getCurrentHousehold();
     const sg = spouseGross();
-    const r = computeAt(gross, householdSelect.value, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
+    const r = computeAt(gross, h, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
 
     marker.setAttribute('cx', xFor(gross));
     marker.setAttribute('cy', yFor(r.total));
@@ -495,26 +542,7 @@
     summaryBenefitsEl.textContent = fmt(benefitsSum);
     summaryTotalEl.textContent = fmt(r.total);
 
-    const nextCliff = findNextCliff(gross);
-
-    // Μεταβολή ΕΙΔΙΚΑ των επιδομάτων (όχι του συνόλου) στα επόμενα 100€ —
-    // έτσι η κανονική προοδευτικότητα του φόρου δεν περνάει ως "απώλεια
-    // επιδόματος". Ο μισθός μετά φόρου πάντα αυξάνεται με το μεικτό, οπότε
-    // μόνο η μεταβολή ΕΕΕ/Α21/ενοικίου/ΚΟΤ μας ενδιαφέρει εδώ.
-    const benefitsNow = benefitsAtGross(gross);
-    const benefitsPlus100 = benefitsAtGross(gross + 100);
-    const benefitDelta100 = benefitsPlus100 - benefitsNow; // συνήθως ≤ 0
-
-    // Μία κοινή "σοβαρότητα" για ρίσκο + insight, ώστε να μη δείχνουν
-    // αντιφατικά πράγματα. Βασίζεται αποκλειστικά σε πραγματική απώλεια
-    // επιδόματος (κοντινός γκρεμός ή σταδιακή απόσβεση ΕΕΕ), όχι στο
-    // συνολικό ποσοστό διατήρησης.
-    const cliffImminent = nextCliff && nextCliff.distance <= 100;
-    const cliffNear = nextCliff && nextCliff.distance <= 400;
-    let severity;
-    if(cliffImminent || benefitDelta100 <= -40) severity = 'high';
-    else if(cliffNear || benefitDelta100 <= -10) severity = 'medium';
-    else severity = 'low';
+    const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(gross);
 
     const severityClass = { high: 'drop-color', medium: 'warn-color', low: 'gain-color' }[severity];
     const riskLabel = { high: 'Υψηλό', medium: 'Μέτριο', low: 'Χαμηλό' }[severity];
@@ -542,14 +570,36 @@
     }
   }
 
+  function updateLivePreview(){
+    const h = getCurrentHousehold();
+    const sg = spouseGross();
+    const r = computeAt(MIN_GROSS, h, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
+    const { severity } = computeSeverity(MIN_GROSS);
+
+    livePreviewBar.classList.remove('medium', 'high');
+    if(severity === 'medium') livePreviewBar.classList.add('medium');
+    else if(severity === 'high') livePreviewBar.classList.add('high');
+
+    const label = householdLabel(h);
+    livePreviewText.innerHTML = `${label}, στο ελάχιστο (${MIN_GROSS}€): <span class="num">${fmt(r.total)}</span> συνολικά`;
+  }
+
+  function householdLabel(h){
+    if(h.children === 0) return h.hasSpouse ? 'ζευγάρι χωρίς παιδιά' : 'άγαμος/η χωρίς παιδιά';
+    const childText = h.children === 1 ? '1 παιδί' : (h.children >= 5 ? '5+ παιδιά' : h.children + ' παιδιά');
+    return (h.isSingleParent ? 'μονογονεϊκή' : 'ζευγάρι') + ' με ' + childText;
+  }
+
   function update(){ render(true); }
 
   function rebuildAll(){
-    const h = HOUSEHOLDS[householdSelect.value];
-    axisLabel.textContent = h.label;
+    const h = getCurrentHousehold();
+    axisLabel.textContent = householdLabel(h);
     spouseIncomeField.style.display = h.hasSpouse ? '' : 'none';
     spouseAgeField.style.display = h.hasSpouse ? '' : 'none';
+    monoParentTag.style.display = h.isSingleParent ? '' : 'none';
     rebuildSamples();
+    updateLivePreview();
     drawCurve();
     render(false);
   }
@@ -563,7 +613,26 @@
     update();
   });
 
-  householdSelect.addEventListener('change', rebuildAll);
+  adultsSingleBtn.addEventListener('click', () => {
+    hasSpouseState = false;
+    adultsSingleBtn.classList.add('selected');
+    adultsCoupleBtn.classList.remove('selected');
+    rebuildAll();
+  });
+  adultsCoupleBtn.addEventListener('click', () => {
+    hasSpouseState = true;
+    adultsCoupleBtn.classList.add('selected');
+    adultsSingleBtn.classList.remove('selected');
+    rebuildAll();
+  });
+  childButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      childrenState = parseInt(btn.dataset.count, 10) || 0;
+      childButtons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      rebuildAll();
+    });
+  });
   ageSelect1.addEventListener('change', rebuildAll);
   ageSelect2.addEventListener('change', rebuildAll);
 
