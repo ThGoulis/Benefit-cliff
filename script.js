@@ -247,7 +247,7 @@
      μέγεθος αντί να σμικρύνονται μαζί με όλο το πλέγμα.
      ============================================================ */
 
-  const MIN_GROSS = 200, MAX_GROSS = 3500, STEP = 10;
+  const MIN_GROSS = 200, MAX_GROSS = 4000, STEP = 10;
 
   const LAYOUTS = {
     desktop: { vbW: 800, vbH: 300, x0: 40, x1: 770, y0: 40, y1: 260 },
@@ -259,9 +259,14 @@
   const chromeLayer = document.getElementById('chromeLayer');
   const curvePath = document.getElementById('curvePath');
   const cliffLayer = document.getElementById('cliffLayer');
+  const referenceLayer = document.getElementById('referenceLayer');
   const marker = document.getElementById('movingMarker');
-  const slider = document.getElementById('incomeSlider');
-  const grossIncomeInput = document.getElementById('grossIncomeInput');
+  const referenceIncomeInput = document.getElementById('referenceIncomeInput');
+  let referenceGross = 900;
+  let offsetGross = 0;
+  function getEffectiveGross(){
+    return Math.min(MAX_GROSS, Math.max(MIN_GROSS, referenceGross + offsetGross));
+  }
   const adultsSingleBtn = document.getElementById('adultsSingleBtn');
   const adultsCoupleBtn = document.getElementById('adultsCoupleBtn');
   const childButtons = document.querySelectorAll('.child-btn');
@@ -277,21 +282,29 @@
   const axisLabel = document.getElementById('axisLabel');
 
   const netReadout = document.getElementById('netReadout');
-  const deltaReadout = document.getElementById('deltaReadout');
+  const netDeltaEl = document.getElementById('netDelta');
   const e1Readout = document.getElementById('e1Readout');
+  const e1DeltaEl = document.getElementById('e1Delta');
+  const whatifResetBtn = document.getElementById('whatifResetBtn');
 
   const eeeAmountEl = document.getElementById('eeeAmount');
   const eeeStatusEl = document.getElementById('eeeStatus');
   const eeeDotEl = document.getElementById('eeeDot');
+  const eeeAfterAmountEl = document.getElementById('eeeAfterAmount');
   const a21AmountEl = document.getElementById('a21Amount');
   const a21StatusEl = document.getElementById('a21Status');
   const a21DotEl = document.getElementById('a21Dot');
+  const a21AfterAmountEl = document.getElementById('a21AfterAmount');
   const rentAmountEl = document.getElementById('rentAmount');
   const rentStatusEl = document.getElementById('rentStatus');
   const rentDotEl = document.getElementById('rentDot');
+  const rentAfterAmountEl = document.getElementById('rentAfterAmount');
   const kotAmountEl = document.getElementById('kotAmount');
   const kotStatusEl = document.getElementById('kotStatus');
   const kotDotEl = document.getElementById('kotDot');
+  const kotAfterAmountEl = document.getElementById('kotAfterAmount');
+  const breakdownTable = document.getElementById('breakdownTable');
+  const afterColHeaderEl = document.getElementById('afterColHeader');
   const benefitTotalAmountEl = document.getElementById('benefitTotalAmount');
   const summaryInsightEl = document.getElementById('summaryInsight');
   const livePreviewBar = document.getElementById('livePreviewBar');
@@ -301,11 +314,10 @@
   const summaryTotalEl = document.getElementById('summaryTotal');
   const summaryRiskEl = document.getElementById('summaryRisk');
   const summaryNextLossEl = document.getElementById('summaryNextLoss');
-  const whatifButtons = document.querySelectorAll('.whatif-btn');
+  const whatifButtons = document.querySelectorAll('.whatif-btn:not(.whatif-btn-reset)');
 
   let samples = [];      // { gross, total, eee, a21, netMonthly }
   let yMin = 0, yMax = 1;
-  let lastTotal = null;
   let yMaxLabelEl = null, yMinLabelEl = null;
 
   const SVGNS = 'http://www.w3.org/2000/svg';
@@ -378,7 +390,7 @@
     chromeLayer.appendChild(minLbl);
 
     const maxLbl = svgEl('text', { class: 'chart-caption-text', x: PLOT_X1, y: capY, 'text-anchor': 'end', style: `font-size:${fs}px` });
-    maxLbl.textContent = '3.500€';
+    maxLbl.textContent = '4.000€';
     chromeLayer.appendChild(maxLbl);
 
     const titleLbl = svgEl('text', { class: 'chart-caption-text', x: (PLOT_X0 + PLOT_X1) / 2, y: capY + 14, 'text-anchor': 'middle', style: `font-size:${fs}px` });
@@ -471,7 +483,7 @@
   }
 
   // Κοινή συνάρτηση σοβαρότητας — τη χρησιμοποιούν και το executive summary
-  // (στην τρέχουσα θέση του slider) και η sticky γραμμή προεπισκόπησης
+  // (στο πραγματικό εισόδημα αναφοράς) και η sticky γραμμή προεπισκόπησης
   // (στο ελάχιστο εισόδημα), ώστε να μη δείχνουν ποτέ αντιφατικά πράγματα.
   function computeSeverity(gross){
     const nextCliff = findNextCliff(gross);
@@ -487,62 +499,79 @@
     return { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent };
   }
 
-  function render(showDelta){
-    const gross = parseFloat(slider.value);
+  function render(){
     const h = getCurrentHousehold();
     const sg = spouseGross();
-    const r = computeAt(gross, h, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
+    const age1 = ageSelect1.value, age2 = ageSelect2.value;
+    const pv = getPropertyValue(), dep = getDeposits(), kwh = getKwh();
 
-    marker.setAttribute('cx', xFor(gross));
-    marker.setAttribute('cy', yFor(r.total));
+    const refGross = referenceGross;
+    const effGross = getEffectiveGross();
+    const hasOffset = Math.round(effGross) !== Math.round(refGross);
 
-    netReadout.textContent = fmt(r.total);
-    e1Readout.textContent = fmt((gross + (h.hasSpouse ? sg : 0)) * 14);
-    if(document.activeElement !== grossIncomeInput){
-      grossIncomeInput.value = Math.round(gross).toLocaleString('el-GR');
+    const rRef = computeAt(refGross, h, sg, age1, age2, pv, dep, kwh);
+    const rEff = hasOffset ? computeAt(effGross, h, sg, age1, age2, pv, dep, kwh) : rRef;
+
+    // Ο κινούμενος δείκτης δείχνει το υποθετικό σημείο (αναφορά+offset) —
+    // η διακεκομμένη γραμμή αναφοράς μένει σταθερή στο πραγματικό εισόδημα.
+    marker.setAttribute('cx', xFor(effGross));
+    marker.setAttribute('cy', yFor(rEff.total));
+
+    netReadout.textContent = fmt(rRef.total);
+    e1Readout.textContent = fmt((refGross + (h.hasSpouse ? sg : 0)) * 14);
+
+    function setDelta(el, deltaVal){
+      el.classList.remove('drop-color', 'gain-color', 'warn-color');
+      if(!hasOffset || Math.round(deltaVal) === 0){
+        el.textContent = '';
+        return;
+      }
+      const rounded = Math.round(deltaVal);
+      el.textContent = (rounded >= 0 ? '+' : '') + rounded + ' €';
+      el.classList.add(rounded > 0 ? 'gain-color' : 'drop-color');
     }
+    setDelta(netDeltaEl, rEff.total - rRef.total);
+    setDelta(e1DeltaEl, (effGross - refGross) * 14);
 
-    if(showDelta && lastTotal !== null){
-      const delta = Math.round(r.total - lastTotal);
-      deltaReadout.textContent = (delta >= 0 ? '+' : '') + delta + ' €';
-      deltaReadout.classList.remove('drop-color', 'gain-color', 'warn-color');
-      if(delta < 0) deltaReadout.classList.add('drop-color');
-      else if(delta > 0 && delta < STEP * 0.7) deltaReadout.classList.add('warn-color');
-      else if(delta > 0) deltaReadout.classList.add('gain-color');
-    } else {
-      // Παράμετρος άλλαξε (νοικοκυριό/σύζυγος), όχι το slider — δεν είναι
-      // πραγματικό "βήμα" εισοδήματος, άρα δεν δείχνουμε ψευδή μεταβολή.
-      deltaReadout.textContent = '—';
-      deltaReadout.classList.remove('drop-color', 'gain-color', 'warn-color');
-    }
-    lastTotal = r.total;
-
-    eeeAmountEl.textContent = fmt(r.eee);
-    eeeStatusEl.textContent = r.eeeBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (r.eee > 0 ? 'Ενεργό' : 'Ανενεργό');
-    eeeDotEl.className = 'status-dot ' + (r.eee > 0 ? 'active' : 'off');
+    // --- Πίνακας ανάλυσης: "Ποσό" = στο πραγματικό σου εισόδημα,
+    //     "Μετά" = στο υποθετικό σενάριο (μόνο αν διαφέρει) ---
+    eeeAmountEl.textContent = fmt(rRef.eee);
+    eeeStatusEl.textContent = rRef.eeeBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.eee > 0 ? 'Ενεργό' : 'Ανενεργό');
+    eeeDotEl.className = 'status-dot ' + (rRef.eee > 0 ? 'active' : 'off');
+    eeeAfterAmountEl.textContent = hasOffset ? fmt(rEff.eee) : '';
 
     const a21Labels = { 0: 'Εκτός ορίου', 1: '1η κατηγορία', 2: '2η κατηγορία', 3: '3η κατηγορία' };
-    a21AmountEl.textContent = fmt(r.a21);
-    a21StatusEl.textContent = a21Labels[r.category];
-    a21DotEl.className = 'status-dot ' + (r.category === 0 ? 'off' : r.category === 3 ? 'warn' : 'active');
+    a21AmountEl.textContent = fmt(rRef.a21);
+    a21StatusEl.textContent = a21Labels[rRef.category];
+    a21DotEl.className = 'status-dot ' + (rRef.category === 0 ? 'off' : rRef.category === 3 ? 'warn' : 'active');
+    a21AfterAmountEl.textContent = hasOffset ? fmt(rEff.a21) : '';
 
-    rentAmountEl.textContent = fmt(r.rent);
-    rentStatusEl.textContent = r.rentBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (r.rent > 0 ? 'Ενεργό' : 'Εκτός ορίου');
-    rentDotEl.className = 'status-dot ' + (r.rent > 0 ? 'active' : 'off');
+    rentAmountEl.textContent = fmt(rRef.rent);
+    rentStatusEl.textContent = rRef.rentBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.rent > 0 ? 'Ενεργό' : 'Εκτός ορίου');
+    rentDotEl.className = 'status-dot ' + (rRef.rent > 0 ? 'active' : 'off');
+    rentAfterAmountEl.textContent = hasOffset ? fmt(rEff.rent) : '';
 
-    kotAmountEl.textContent = fmt(r.kot);
-    kotStatusEl.textContent = r.kotBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (r.kot > 0 ? 'Ενεργό' : 'Εκτός ορίου');
-    kotDotEl.className = 'status-dot ' + (r.kot > 0 ? 'active' : 'off');
+    kotAmountEl.textContent = fmt(rRef.kot);
+    kotStatusEl.textContent = rRef.kotBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.kot > 0 ? 'Ενεργό' : 'Εκτός ορίου');
+    kotDotEl.className = 'status-dot ' + (rRef.kot > 0 ? 'active' : 'off');
+    kotAfterAmountEl.textContent = hasOffset ? fmt(rEff.kot) : '';
 
-    benefitTotalAmountEl.textContent = fmt(Math.round(r.eee) + Math.round(r.a21) + Math.round(r.rent) + Math.round(r.kot));
+    breakdownTable.classList.toggle('has-offset', hasOffset);
+    if(hasOffset){
+      const offsetRounded = Math.round(effGross - refGross);
+      afterColHeaderEl.textContent = 'Μετά (' + (offsetRounded >= 0 ? '+' : '') + offsetRounded + '€)';
+    }
 
-    // --- Executive summary (#10) ---
-    const benefitsSum = Math.round(r.eee) + Math.round(r.a21) + Math.round(r.rent) + Math.round(r.kot);
-    summaryNetEl.textContent = fmt(r.netMonthly);
+    benefitTotalAmountEl.textContent = fmt(Math.round(rRef.eee) + Math.round(rRef.a21) + Math.round(rRef.rent) + Math.round(rRef.kot));
+
+    // --- Executive summary — πάντα στο πραγματικό σου εισόδημα (αναφορά),
+    //     ανεξάρτητα από όποιο "τι θα γινόταν" εξερευνάς αυτή τη στιγμή ---
+    const benefitsSum = Math.round(rRef.eee) + Math.round(rRef.a21) + Math.round(rRef.rent) + Math.round(rRef.kot);
+    summaryNetEl.textContent = fmt(rRef.netMonthly);
     summaryBenefitsEl.textContent = fmt(benefitsSum);
-    summaryTotalEl.textContent = fmt(r.total);
+    summaryTotalEl.textContent = fmt(rRef.total);
 
-    const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(gross);
+    const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(refGross);
 
     const severityClass = { high: 'drop-color', medium: 'warn-color', low: 'gain-color' }[severity];
     const riskLabel = { high: 'Υψηλό', medium: 'Μέτριο', low: 'Χαμηλό' }[severity];
@@ -573,15 +602,15 @@
   function updateLivePreview(){
     const h = getCurrentHousehold();
     const sg = spouseGross();
-    const r = computeAt(MIN_GROSS, h, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
-    const { severity } = computeSeverity(MIN_GROSS);
+    const r = computeAt(referenceGross, h, sg, ageSelect1.value, ageSelect2.value, getPropertyValue(), getDeposits(), getKwh());
+    const { severity } = computeSeverity(referenceGross);
 
     livePreviewBar.classList.remove('medium', 'high');
     if(severity === 'medium') livePreviewBar.classList.add('medium');
     else if(severity === 'high') livePreviewBar.classList.add('high');
 
     const label = householdLabel(h);
-    livePreviewText.innerHTML = `${label}, στο ελάχιστο (${MIN_GROSS}€): <span class="num">${fmt(r.total)}</span> συνολικά`;
+    livePreviewText.innerHTML = `${label}, στο εισόδημά σου: <span class="num">${fmt(r.total)}</span> συνολικά`;
   }
 
   function householdLabel(h){
@@ -590,7 +619,26 @@
     return (h.isSingleParent ? 'μονογονεϊκή' : 'ζευγάρι') + ' με ' + childText;
   }
 
-  function update(){ render(true); }
+  // Στατική, διακεκομμένη γραμμή στο πραγματικό εισόδημα του χρήστη —
+  // σταθερή, ανεξάρτητη από όποιο "τι θα γινόταν" εξερευνά κανείς.
+  function drawReferenceLine(){
+    referenceLayer.innerHTML = '';
+    const x = xFor(referenceGross);
+
+    const line = document.createElementNS(SVGNS, 'line');
+    line.setAttribute('class', 'reference-line');
+    line.setAttribute('x1', x); line.setAttribute('x2', x);
+    line.setAttribute('y1', PLOT_Y0); line.setAttribute('y2', PLOT_Y1);
+    referenceLayer.appendChild(line);
+
+    const label = document.createElementNS(SVGNS, 'text');
+    label.setAttribute('class', 'reference-label');
+    label.setAttribute('x', x);
+    label.setAttribute('y', PLOT_Y0 - 6);
+    label.setAttribute('text-anchor', 'middle');
+    label.textContent = 'ΕΣΥ';
+    referenceLayer.appendChild(label);
+  }
 
   function rebuildAll(){
     const h = getCurrentHousehold();
@@ -598,19 +646,23 @@
     spouseIncomeField.style.display = h.hasSpouse ? '' : 'none';
     spouseAgeField.style.display = h.hasSpouse ? '' : 'none';
     monoParentTag.style.display = h.isSingleParent ? '' : 'none';
+    offsetGross = 0;
     rebuildSamples();
     updateLivePreview();
     drawCurve();
-    render(false);
+    drawReferenceLine();
+    render();
   }
 
-  slider.addEventListener('input', update);
+  referenceIncomeInput.addEventListener('input', () => {
+    formatFieldValue(referenceIncomeInput);
+    referenceGross = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFormatted(referenceIncomeInput.value)));
+    rebuildAll();
+  });
 
-  grossIncomeInput.addEventListener('input', () => {
-    formatFieldValue(grossIncomeInput);
-    const target = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFormatted(grossIncomeInput.value)));
-    slider.value = target;
-    update();
+  whatifResetBtn.addEventListener('click', () => {
+    offsetGross = 0;
+    render();
   });
 
   adultsSingleBtn.addEventListener('click', () => {
@@ -639,9 +691,9 @@
   whatifButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const amount = parseFloat(btn.dataset.amount) || 0;
-      const target = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFloat(slider.value) + amount));
-      slider.value = target;
-      update();
+      const clampedEffective = Math.min(MAX_GROSS, Math.max(MIN_GROSS, referenceGross + offsetGross + amount));
+      offsetGross = clampedEffective - referenceGross;
+      render();
     });
   });
 

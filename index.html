@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260811">
+<link rel="stylesheet" href="style.css?v=20260812">
 </head>
 <body>
 
@@ -59,16 +59,16 @@
       <button class="intro-close" id="introCloseBtn" aria-label="Κλείσιμο">×</button>
       <div class="intro-eyebrow">Πώς να το διαβάσεις</div>
       <ul class="intro-list">
-        <li>Διάλεξε <strong>σύνθεση νοικοκυριού</strong> και ηλικία(-ες) στην ενότητα 01.</li>
-        <li>Σύρε το <strong>slider</strong> στο διάγραμμα — βλέπεις πώς αλλάζει το πραγματικό καθαρό διαθέσιμο εισόδημα, όχι μόνο ο μισθός.</li>
+        <li>Στην ενότητα 01, γράψε τον <strong>πραγματικό μεικτό μισθό σου</strong> και διάλεξε σύνθεση νοικοκυριού/ηλικία(-ες) — γίνεται το σταθερό σημείο αναφοράς σου στο διάγραμμα.</li>
+        <li>Χρησιμοποίησε τα κουμπιά <strong>"τι θα γινόταν"</strong> για να δεις πώς θα άλλαζε το καθαρό σου εισόδημα με μια υποθετική αύξηση/μείωση.</li>
         <li>Τα <strong>⚠ σημάδια</strong> στο διάγραμμα δείχνουν απότομες πτώσεις — σημεία όπου η αύξηση μισθού σου κοστίζει επίδομα.</li>
-        <li>Ο πίνακας στην ενότητα 03 αναλύει το κάθε επίδομα ξεχωριστά, στο τρέχον σημείο.</li>
+        <li>Ο πίνακας στην ενότητα 03 αναλύει το κάθε επίδομα ξεχωριστά, με στήλη "Μετά" όταν δοκιμάζεις κάτι υποθετικό.</li>
       </ul>
     </div>
 
     <div class="eyebrow">Μισθός &amp; επιδόματα</div>
     <h1>Ο πλήρης <em>χάρτης</em> του εισοδήματός σου</h1>
-    <p class="lede">Σύρε τον μισθό σου και δες πώς αλλάζουν τα επιδόματά σου, σε πραγματικό χρόνο.</p>
+    <p class="lede">Γράψε τον μισθό σου και δες πώς αλλάζουν τα επιδόματά σου, σε πραγματικό χρόνο.</p>
   </section>
 
   <section class="section">
@@ -76,7 +76,13 @@
       <span class="section-num">01</span>
       <h2>Στοιχεία σου</h2>
     </div>
-    <p class="section-desc">Η σύνθεση νοικοκυριού τροφοδοτεί απευθείας το διάγραμμα. Για ζευγάρια, ο μισθός του συζύγου παραμένει σταθερός ενώ σέρνεις το slider για το άτομο 1. Η ακίνητη περιουσία και οι καταθέσεις καθορίζουν αν δικαιούσαι καθόλου ΕΕΕ ή επίδομα ενοικίου — ανεξάρτητα από το εισόδημα.</p>
+    <p class="section-desc">Το εισόδημα (άτομο 1) γίνεται σταθερό σημείο αναφοράς στο διάγραμμα. Η σύνθεση νοικοκυριού τροφοδοτεί απευθείας το διάγραμμα. Για ζευγάρια, ο μισθός του συζύγου παραμένει σταθερός. Η ακίνητη περιουσία και οι καταθέσεις καθορίζουν αν δικαιούσαι καθόλου ΕΕΕ ή επίδομα ενοικίου — ανεξάρτητα από το εισόδημα.</p>
+
+    <div class="income-input-row">
+      <label for="referenceIncomeInput">Ο τρέχων μεικτός μισθός σου (άτομο 1)</label>
+      <input type="text" inputmode="numeric" id="referenceIncomeInput" value="900" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <div class="hint">σταθερό σημείο αναφοράς στο διάγραμμα — χρησιμοποίησε τα κουμπιά "τι θα γινόταν" για να δεις υποθετικές αλλαγές</div>
+    </div>
 
     <div class="household-picker">
       <div class="field-label">Ενήλικοι στο νοικοκυριό</div>
@@ -113,7 +119,7 @@
       <div class="field spouse-field" id="spouseIncomeField" style="display:none">
         <label>Μεικτός μηνιαίος μισθός συζύγου</label>
         <input type="text" inputmode="numeric" id="spouseIncome" value="0">
-        <div class="hint">σταθερός — το slider παραπάνω κινεί μόνο το άτομο 1</div>
+        <div class="hint">σταθερός — μόνο το εισόδημα του ατόμου 1 (πιο πάνω) κινεί το διάγραμμα</div>
       </div>
       <div class="field spouse-field" id="spouseAgeField" style="display:none">
         <label>Ηλικία συζύγου</label>
@@ -159,6 +165,9 @@
         <!-- cliff markers get inserted here dynamically -->
         <g id="cliffLayer"></g>
 
+        <!-- στατικό σημείο αναφοράς (το πραγματικό εισόδημα του χρήστη) -->
+        <g id="referenceLayer"></g>
+
         <!-- the curve itself, drawn dynamically -->
         <path id="curvePath" class="curve-path" d="" />
 
@@ -167,23 +176,15 @@
       </svg>
 
       <div class="slider-row">
-        <div class="income-input-row">
-          <label for="grossIncomeInput">Μεικτό εισόδημα (άτομο 1)</label>
-          <input type="text" inputmode="numeric" id="grossIncomeInput" value="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        </div>
-        <label for="incomeSlider">Σύρε το μεικτό εισόδημα</label>
-        <input type="range" id="incomeSlider" min="200" max="3500" value="200" step="10">
         <div class="readouts">
           <div class="readout">
             <div class="num" id="netReadout">690 €</div>
+            <div class="num-delta" id="netDelta"></div>
             <div class="lbl">Καθαρό διαθέσιμο εισόδημα</div>
           </div>
           <div class="readout">
-            <div class="num drop-color" id="deltaReadout">—</div>
-            <div class="lbl">Μεταβολή από προηγούμενο βήμα</div>
-          </div>
-          <div class="readout">
             <div class="num" id="e1Readout">— €</div>
+            <div class="num-delta" id="e1Delta"></div>
             <div class="lbl">Ετήσιο ακαθάριστο εισόδημα</div>
           </div>
         </div>
@@ -200,6 +201,7 @@
           <button type="button" class="whatif-btn" data-amount="200">+200€</button>
           <button type="button" class="whatif-btn" data-amount="500">+500€</button>
           <button type="button" class="whatif-btn" data-amount="1000">+1.000€</button>
+          <button type="button" class="whatif-btn whatif-btn-reset" id="whatifResetBtn">Επαναφορά</button>
         </div>
       </div>
     </div>
@@ -210,7 +212,7 @@
       <span class="section-num">03</span>
       <h2>Ανάλυση επιδομάτων</h2>
     </div>
-    <p class="section-desc">Ανάλυση επιδομάτων στο τρέχον σημείο του διαγράμματος (τρέχουσα θέση του slider).</p>
+    <p class="section-desc">Ανάλυση επιδομάτων στο εισόδημά σου· αν δοκιμάζεις "τι θα γινόταν", η στήλη "Μετά" δείχνει το υποθετικό σενάριο.</p>
 
     <div class="summary-card">
       <p class="summary-insight" id="summaryInsight">—</p>
@@ -238,30 +240,34 @@
       </div>
     </div>
 
-    <table class="breakdown">
+    <table class="breakdown" id="breakdownTable">
       <thead>
-        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th></tr>
+        <tr><th>Επίδομα</th><th>Κατάσταση</th><th>Ποσό</th><th class="after-col" id="afterColHeader">Μετά</th></tr>
       </thead>
       <tbody>
         <tr>
           <td>Ελάχιστο Εγγυημένο Εισόδημα</td>
           <td><span class="status-dot" id="eeeDot"></span><span id="eeeStatus">—</span></td>
           <td class="amount" id="eeeAmount">— €</td>
+          <td class="amount after-col" id="eeeAfterAmount"></td>
         </tr>
         <tr>
           <td>Επίδομα παιδιού (Α21)</td>
           <td><span class="status-dot" id="a21Dot"></span><span id="a21Status">—</span></td>
           <td class="amount" id="a21Amount">— €</td>
+          <td class="amount after-col" id="a21AfterAmount"></td>
         </tr>
         <tr>
           <td>Επίδομα ενοικίου</td>
           <td><span class="status-dot" id="rentDot"></span><span id="rentStatus">—</span></td>
           <td class="amount" id="rentAmount">— €</td>
+          <td class="amount after-col" id="rentAfterAmount"></td>
         </tr>
         <tr>
           <td>Κοινωνικό Οικιακό Τιμολόγιο (ρεύμα)</td>
           <td><span class="status-dot" id="kotDot"></span><span id="kotStatus">—</span></td>
           <td class="amount" id="kotAmount">— €</td>
+          <td class="amount after-col" id="kotAfterAmount"></td>
         </tr>
       </tbody>
     </table>
@@ -293,7 +299,7 @@
 
 </div>
 
-<script src="script.js?v=20260811"></script>
+<script src="script.js?v=20260812"></script>
 
 </body>
 </html>
