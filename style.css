@@ -568,7 +568,23 @@
   .summary-insight.warn-color{ color: var(--hazard); }
   .summary-insight.drop-color{ color: var(--drop); }
   .summary-insight.gain-color{ color: var(--contour); }
-  .summary-grid{
+  .summary-equation{
+    display:flex;
+    align-items:flex-start;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .summary-op{
+    font-family:'Newsreader', serif;
+    font-size: 16px;
+    color: var(--ink-faint);
+    flex: none;
+    margin-top: 2px;
+  }
+  .summary-risk-row{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(110px,1fr));
     gap: 16px;
@@ -608,7 +624,9 @@
     border-bottom: 1px solid var(--line-strong);
   }
   table.breakdown .after-col{ display: none; }
-  table.breakdown.has-offset .after-col{ display: table-cell; color: var(--hazard); }
+  table.breakdown.has-offset .after-col{ display: table-cell; }
+  table.breakdown .after-col.gain-color, .benefit-total-amounts .after-col.gain-color{ color: var(--contour); }
+  table.breakdown .after-col.drop-color, .benefit-total-amounts .after-col.drop-color{ color: var(--drop); }
   .whatif-btn-reset{
     color: var(--ink-soft);
     border-color: var(--line-strong);
@@ -620,6 +638,11 @@
     border-bottom: 1px solid var(--line);
   }
   table.breakdown tr:last-child td{ border-bottom:none; }
+  .benefit-name{ font-weight: 500; }
+  .benefit-status{
+    display:flex; align-items:center; margin-top: 4px;
+    font-size: 11.5px; color: var(--ink-faint);
+  }
   .status-dot{
     display:inline-block;
     width:8px; height:8px;
@@ -651,7 +674,11 @@
     letter-spacing: 0.04em;
     margin-inline-start: 6px;
   }
+  .benefit-total-amounts{ display:flex; align-items:baseline; gap: 10px; }
+  .benefit-total-amounts .after-col:empty{ display: none; }
   .benefit-total .amount{ font-size: 19px; color: var(--contour); }
+  .benefit-total-amounts .after-col{ font-size: 15px; }
+  .benefit-total-amounts .after-col::before{ content: "→ "; color: var(--ink-faint); font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; }
 
   footer{
     margin-top: 64px;

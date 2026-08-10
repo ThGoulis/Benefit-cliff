@@ -306,6 +306,7 @@
   const breakdownTable = document.getElementById('breakdownTable');
   const afterColHeaderEl = document.getElementById('afterColHeader');
   const benefitTotalAmountEl = document.getElementById('benefitTotalAmount');
+  const benefitTotalAfterAmountEl = document.getElementById('benefitTotalAfterAmount');
   const summaryInsightEl = document.getElementById('summaryInsight');
   const livePreviewBar = document.getElementById('livePreviewBar');
   const livePreviewText = document.getElementById('livePreviewText');
@@ -563,6 +564,16 @@
     }
 
     benefitTotalAmountEl.textContent = fmt(Math.round(rRef.eee) + Math.round(rRef.a21) + Math.round(rRef.rent) + Math.round(rRef.kot));
+
+    benefitTotalAfterAmountEl.classList.remove('gain-color', 'drop-color');
+    if(hasOffset){
+      const refBenefitsSum = Math.round(rRef.eee) + Math.round(rRef.a21) + Math.round(rRef.rent) + Math.round(rRef.kot);
+      const effBenefitsSum = Math.round(rEff.eee) + Math.round(rEff.a21) + Math.round(rEff.rent) + Math.round(rEff.kot);
+      benefitTotalAfterAmountEl.textContent = fmt(effBenefitsSum);
+      benefitTotalAfterAmountEl.classList.add(effBenefitsSum >= refBenefitsSum ? 'gain-color' : 'drop-color');
+    } else {
+      benefitTotalAfterAmountEl.textContent = '';
+    }
 
     // --- Executive summary — πάντα στο πραγματικό σου εισόδημα (αναφορά),
     //     ανεξάρτητα από όποιο "τι θα γινόταν" εξερευνάς αυτή τη στιγμή ---
