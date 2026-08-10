@@ -274,6 +274,7 @@
   let hasSpouseState = true;
   let childrenState = 2;
   function getCurrentHousehold(){ return buildHousehold(hasSpouseState, childrenState); }
+  const basicFieldsGrid = document.getElementById('basicFieldsGrid');
   const spouseIncomeField = document.getElementById('spouseIncomeField');
   const spouseIncomeInput = document.getElementById('spouseIncome');
   const ageSelect1 = document.getElementById('ageSelect1');
@@ -286,23 +287,29 @@
   const e1Readout = document.getElementById('e1Readout');
   const e1DeltaEl = document.getElementById('e1Delta');
   const whatifResetBtn = document.getElementById('whatifResetBtn');
+  const whatifCustomInput = document.getElementById('whatifCustomInput');
+  const whatifCustomBtn = document.getElementById('whatifCustomBtn');
 
   const eeeAmountEl = document.getElementById('eeeAmount');
   const eeeStatusEl = document.getElementById('eeeStatus');
   const eeeDotEl = document.getElementById('eeeDot');
   const eeeAfterAmountEl = document.getElementById('eeeAfterAmount');
+  const eeeDiffAmountEl = document.getElementById('eeeDiffAmount');
   const a21AmountEl = document.getElementById('a21Amount');
   const a21StatusEl = document.getElementById('a21Status');
   const a21DotEl = document.getElementById('a21Dot');
   const a21AfterAmountEl = document.getElementById('a21AfterAmount');
+  const a21DiffAmountEl = document.getElementById('a21DiffAmount');
   const rentAmountEl = document.getElementById('rentAmount');
   const rentStatusEl = document.getElementById('rentStatus');
   const rentDotEl = document.getElementById('rentDot');
   const rentAfterAmountEl = document.getElementById('rentAfterAmount');
+  const rentDiffAmountEl = document.getElementById('rentDiffAmount');
   const kotAmountEl = document.getElementById('kotAmount');
   const kotStatusEl = document.getElementById('kotStatus');
   const kotDotEl = document.getElementById('kotDot');
   const kotAfterAmountEl = document.getElementById('kotAfterAmount');
+  const kotDiffAmountEl = document.getElementById('kotDiffAmount');
   const breakdownTable = document.getElementById('breakdownTable');
   const afterColHeaderEl = document.getElementById('afterColHeader');
   const benefitTotalAmountEl = document.getElementById('benefitTotalAmount');
@@ -534,28 +541,40 @@
     setDelta(netDeltaEl, rEff.total - rRef.total);
     setDelta(e1DeltaEl, (effGross - refGross) * 14);
 
+    function setDiffCell(el, refVal, effVal){
+      el.classList.remove('gain-color', 'drop-color');
+      if(!hasOffset){ el.textContent = ''; return; }
+      const diff = Math.round(effVal) - Math.round(refVal);
+      el.textContent = (diff >= 0 ? '+' : '') + diff + ' €';
+      if(diff !== 0) el.classList.add(diff > 0 ? 'gain-color' : 'drop-color');
+    }
+
     // --- Πίνακας ανάλυσης: "Ποσό" = στο πραγματικό σου εισόδημα,
     //     "Μετά" = στο υποθετικό σενάριο (μόνο αν διαφέρει) ---
     eeeAmountEl.textContent = fmt(rRef.eee);
     eeeStatusEl.textContent = rRef.eeeBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.eee > 0 ? 'Ενεργό' : 'Ανενεργό');
     eeeDotEl.className = 'status-dot ' + (rRef.eee > 0 ? 'active' : 'off');
     eeeAfterAmountEl.textContent = hasOffset ? fmt(rEff.eee) : '';
+    setDiffCell(eeeDiffAmountEl, rRef.eee, rEff.eee);
 
     const a21Labels = { 0: 'Εκτός ορίου', 1: '1η κατηγορία', 2: '2η κατηγορία', 3: '3η κατηγορία' };
     a21AmountEl.textContent = fmt(rRef.a21);
     a21StatusEl.textContent = a21Labels[rRef.category];
     a21DotEl.className = 'status-dot ' + (rRef.category === 0 ? 'off' : rRef.category === 3 ? 'warn' : 'active');
     a21AfterAmountEl.textContent = hasOffset ? fmt(rEff.a21) : '';
+    setDiffCell(a21DiffAmountEl, rRef.a21, rEff.a21);
 
     rentAmountEl.textContent = fmt(rRef.rent);
     rentStatusEl.textContent = rRef.rentBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.rent > 0 ? 'Ενεργό' : 'Εκτός ορίου');
     rentDotEl.className = 'status-dot ' + (rRef.rent > 0 ? 'active' : 'off');
     rentAfterAmountEl.textContent = hasOffset ? fmt(rEff.rent) : '';
+    setDiffCell(rentDiffAmountEl, rRef.rent, rEff.rent);
 
     kotAmountEl.textContent = fmt(rRef.kot);
     kotStatusEl.textContent = rRef.kotBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.kot > 0 ? 'Ενεργό' : 'Εκτός ορίου');
     kotDotEl.className = 'status-dot ' + (rRef.kot > 0 ? 'active' : 'off');
     kotAfterAmountEl.textContent = hasOffset ? fmt(rEff.kot) : '';
+    setDiffCell(kotDiffAmountEl, rRef.kot, rEff.kot);
 
     breakdownTable.classList.toggle('has-offset', hasOffset);
     if(hasOffset){
@@ -656,6 +675,7 @@
     axisLabel.textContent = householdLabel(h);
     spouseIncomeField.style.display = h.hasSpouse ? '' : 'none';
     spouseAgeField.style.display = h.hasSpouse ? '' : 'none';
+    basicFieldsGrid.style.display = h.hasSpouse ? '' : 'none';
     monoParentTag.style.display = h.isSingleParent ? '' : 'none';
     offsetGross = 0;
     rebuildSamples();
@@ -706,6 +726,19 @@
       offsetGross = clampedEffective - referenceGross;
       render();
     });
+  });
+
+  function applyCustomWhatif(){
+    const amount = parseFloat(whatifCustomInput.value.replace(',', '.'));
+    if(!amount || isNaN(amount)) return;
+    const clampedEffective = Math.min(MAX_GROSS, Math.max(MIN_GROSS, referenceGross + offsetGross + amount));
+    offsetGross = clampedEffective - referenceGross;
+    whatifCustomInput.value = '';
+    render();
+  }
+  whatifCustomBtn.addEventListener('click', applyCustomWhatif);
+  whatifCustomInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') applyCustomWhatif();
   });
 
   applyLayout();

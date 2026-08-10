@@ -118,7 +118,7 @@
       <div class="derived-tag" id="monoParentTag" style="display:none">Μονογονεϊκή οικογένεια — εφαρμόζονται οι ειδικοί κανόνες</div>
     </div>
 
-    <div class="field-grid">
+    <div class="field-grid" id="basicFieldsGrid">
       <div class="field spouse-field" id="spouseIncomeField" style="display:none">
         <label>Μεικτός μηνιαίος μισθός συζύγου</label>
         <input type="text" inputmode="numeric" id="spouseIncome" value="0">
@@ -132,22 +132,29 @@
           <option value="standard" selected>Άνω των 30 ετών</option>
         </select>
       </div>
-      <div class="field criteria-field">
-        <label>Αξία ακίνητης περιουσίας (αντικειμενική)</label>
-        <input type="text" inputmode="numeric" id="propertyValue" value="0">
-        <div class="hint">σύνολο νοικοκυριού — επηρεάζει ΕΕΕ &amp; επίδομα ενοικίου</div>
-      </div>
-      <div class="field criteria-field">
-        <label>Καταθέσεις / κινητή περιουσία</label>
-        <input type="text" inputmode="numeric" id="depositsValue" value="0">
-        <div class="hint">σύνολο νοικοκυριού — επηρεάζει ΕΕΕ &amp; επίδομα ενοικίου</div>
-      </div>
-      <div class="field criteria-field">
-        <label>Μέση μηνιαία κατανάλωση ρεύματος (kWh)</label>
-        <input type="number" id="kwhValue" value="300" min="0" step="10">
-        <div class="hint">εκτίμηση, μπορείς να την αλλάξεις — επηρεάζει το ΚΟΤ</div>
-      </div>
     </div>
+
+    <details class="advanced-options">
+      <summary>Προχωρημένες επιλογές <span class="advanced-hint">— ακίνητη περιουσία, καταθέσεις, ρεύμα</span></summary>
+      <p class="advanced-desc">Μόνο αν έχεις ακίνητη περιουσία ή καταθέσεις πάνω από τα όρια — μπλοκάρουν εντελώς το ΕΕΕ ή το επίδομα ενοικίου, ανεξάρτητα από το εισόδημα. Άφησέ τα στο 0 αν δεν σε αφορούν.</p>
+      <div class="field-grid">
+        <div class="field criteria-field">
+          <label>Αξία ακίνητης περιουσίας (αντικειμενική)</label>
+          <input type="text" inputmode="numeric" id="propertyValue" value="0">
+          <div class="hint">σύνολο νοικοκυριού — επηρεάζει ΕΕΕ &amp; επίδομα ενοικίου</div>
+        </div>
+        <div class="field criteria-field">
+          <label>Καταθέσεις / κινητή περιουσία</label>
+          <input type="text" inputmode="numeric" id="depositsValue" value="0">
+          <div class="hint">σύνολο νοικοκυριού — επηρεάζει ΕΕΕ &amp; επίδομα ενοικίου</div>
+        </div>
+        <div class="field criteria-field">
+          <label>Μέση μηνιαία κατανάλωση ρεύματος (kWh)</label>
+          <input type="number" id="kwhValue" value="300" min="0" step="10">
+          <div class="hint">εκτίμηση, μπορείς να την αλλάξεις — επηρεάζει το ΚΟΤ</div>
+        </div>
+      </div>
+    </details>
   </section>
 
   <section class="section">
@@ -206,7 +213,14 @@
           <button type="button" class="whatif-btn" data-amount="1000">+1.000€</button>
           <button type="button" class="whatif-btn whatif-btn-reset" id="whatifResetBtn">Επαναφορά</button>
         </div>
+        <div class="whatif-custom">
+          <input type="text" inputmode="numeric" id="whatifCustomInput" placeholder="π.χ. 350">
+          <span>€</span>
+          <button type="button" id="whatifCustomBtn">Εφαρμογή</button>
+        </div>
       </div>
+
+      <p class="result-disclaimer">Ενδεικτικός υπολογισμός — δεν αποτελεί επίσημο έλεγχο επιλεξιμότητας για κανένα επίδομα.</p>
     </div>
   </section>
 
@@ -251,7 +265,7 @@
 
     <table class="breakdown" id="breakdownTable">
       <thead>
-        <tr><th>Επίδομα</th><th>Ποσό</th><th class="after-col" id="afterColHeader">Μετά</th></tr>
+        <tr><th>Επίδομα</th><th>Ποσό</th><th class="after-col" id="afterColHeader">Μετά</th><th class="after-col diff-col">Διαφορά</th></tr>
       </thead>
       <tbody>
         <tr>
@@ -261,6 +275,7 @@
           </td>
           <td class="amount" id="eeeAmount">— €</td>
           <td class="amount after-col" id="eeeAfterAmount"></td>
+          <td class="amount after-col diff-col" id="eeeDiffAmount"></td>
         </tr>
         <tr>
           <td>
@@ -269,6 +284,7 @@
           </td>
           <td class="amount" id="a21Amount">— €</td>
           <td class="amount after-col" id="a21AfterAmount"></td>
+          <td class="amount after-col diff-col" id="a21DiffAmount"></td>
         </tr>
         <tr>
           <td>
@@ -277,6 +293,7 @@
           </td>
           <td class="amount" id="rentAmount">— €</td>
           <td class="amount after-col" id="rentAfterAmount"></td>
+          <td class="amount after-col diff-col" id="rentDiffAmount"></td>
         </tr>
         <tr>
           <td>
@@ -285,6 +302,7 @@
           </td>
           <td class="amount" id="kotAmount">— €</td>
           <td class="amount after-col" id="kotAfterAmount"></td>
+          <td class="amount after-col diff-col" id="kotDiffAmount"></td>
         </tr>
       </tbody>
     </table>

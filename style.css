@@ -395,11 +395,48 @@
     letter-spacing: 0.05em;
     flex: none;
   }
+  .result-disclaimer{
+    margin: 14px 0 0;
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
   .whatif-buttons{
     display:flex;
     gap: 8px;
     flex-wrap: wrap;
   }
+  .whatif-custom{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .whatif-custom input{
+    width: 90px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 4px 0;
+  }
+  .whatif-custom input:focus{ outline:none; border-bottom-color: var(--contour); }
+  .whatif-custom span{ color: var(--ink-faint); font-size: 13px; }
+  .whatif-custom button{
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--contour);
+    background: transparent;
+    border: 1px solid var(--contour-soft);
+    border-radius: 999px;
+    padding: 5px 13px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .whatif-custom button:hover{ background: var(--contour); color: var(--paper-card); }
   .whatif-btn{
     font-family: inherit;
     font-size: 12.5px;
@@ -702,6 +739,36 @@
   .methodology{
     font-size: 13px;
     color: var(--ink-soft);
+  }
+  .advanced-options{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 22px;
+  }
+  .advanced-options summary{
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink);
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .advanced-options summary::-webkit-details-marker{ display:none; }
+  .advanced-options summary::before{
+    content: "▸";
+    color: var(--contour);
+    transition: transform 0.15s ease;
+    font-size: 11px;
+  }
+  .advanced-options[open] summary::before{ transform: rotate(90deg); }
+  .advanced-hint{ font-weight: 400; font-size: 12px; color: var(--ink-faint); }
+  .advanced-desc{
+    margin: 12px 0 16px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    max-width: 60ch;
   }
   .methodology summary{
     cursor: pointer;
