@@ -59,6 +59,12 @@
     display:inline-block; margin-top: 6px; font-size: 12px; color: var(--contour); font-weight: 600; text-decoration:none;
   }
   .agency-row a.tool-link:hover{ text-decoration: underline; }
+  .agency-row a.gov-link{
+    display:inline-flex; align-items:center; gap:4px; margin-top: 6px; margin-inline-start: 14px;
+    font-size: 11.5px; color: var(--ink-faint); text-decoration:none;
+  }
+  .agency-row a.gov-link:hover{ color: var(--contour); text-decoration: underline; }
+  .row-links{ display:flex; flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -67,7 +73,7 @@
   <div class="wrap">
     <div class="brand"><span class="mark"></span> Χάρτης Εισοδήματος</div>
     <nav>
-      <a href="index.html">Εργαλείο</a>
+      <a href="index.html">Υπολογισμός επιδομάτων</a>
       <a href="https://github.com/ThGoulis/Benefit-cliff/blob/main/TECHNICAL.md" target="_blank" rel="noopener">Πηγές</a>
       <button id="themeToggle" type="button" aria-pressed="false">
         <span class="tt-icon" aria-hidden="true">☾</span>
@@ -85,14 +91,17 @@
   </section>
 
   <!-- ΟΠΕΚΑ -->
-  <details class="agency-group" open>
+  <details class="agency-group">
     <summary><span class="agency-badge">ΟΠΕΚΑ</span> Προνοιακά &amp; Οικογενειακά Επιδόματα <span class="agency-full">— Οργανισμός Προνοιακών Επιδομάτων &amp; Κοινωνικής Αλληλεγγύης</span></summary>
 
     <div class="agency-row">
       <div>
         <div class="name">Ελάχιστο Εγγυημένο Εισόδημα (ΕΕΕ) <span class="in-tool-tag">Στο εργαλείο</span></div>
         <div class="desc">Μηνιαία εισοδηματική ενίσχυση για νοικοκυριά σε συνθήκες ακραίας φτώχειας.</div>
-        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+        <div class="row-links">
+          <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+          <a class="gov-link" href="https://www.gov.gr/el/services/1002216/elakhisto-egguemeno-eisodema" target="_blank" rel="noopener">gov.gr ↗</a>
+        </div>
       </div>
       <div class="amount">έως 972€/μήνα</div>
     </div>
@@ -101,7 +110,10 @@
       <div>
         <div class="name">Επίδομα Παιδιού (Α21) <span class="in-tool-tag">Στο εργαλείο</span></div>
         <div class="desc">Ανά διμηνία, ανάλογα με το ισοδύναμο οικογενειακό εισόδημα και τον αριθμό εξαρτώμενων τέκνων.</div>
-        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+        <div class="row-links">
+          <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+          <a class="gov-link" href="https://www.idika.gr/epidomapaidiou/" target="_blank" rel="noopener">gov.gr ↗</a>
+        </div>
       </div>
       <div class="amount">28-140€/μήνα ανά τέκνο</div>
     </div>
@@ -110,7 +122,10 @@
       <div>
         <div class="name">Επίδομα Στέγασης (Ενοικίου) <span class="in-tool-tag">Στο εργαλείο</span></div>
         <div class="desc">Για νοικοκυριά που μισθώνουν την κύρια κατοικία τους, με εισοδηματικά και περιουσιακά κριτήρια.</div>
-        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+        <div class="row-links">
+          <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+          <a class="gov-link" href="https://www.gov.gr/ipiresies/ugeia-kai-pronoia/epidomata/epidoma-stegases" target="_blank" rel="noopener">gov.gr ↗</a>
+        </div>
       </div>
       <div class="amount">70-210€/μήνα</div>
     </div>
@@ -119,6 +134,7 @@
       <div>
         <div class="name">Επίδομα Γέννησης</div>
         <div class="desc">Εφάπαξ βοήθημα σε 2 δόσεις για κάθε νέα γέννηση, κλιμακούμενο ανάλογα με τη σειρά γέννησης.</div>
+        <a class="gov-link" href="https://www.gov.gr/ipiresies/ugeia-kai-pronoia/epidomata/epidoma-genneses" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">2.400–3.500€</div>
     </div>
@@ -127,6 +143,7 @@
       <div>
         <div class="name">Αναπηρικά / Προνοιακά Επιδόματα</div>
         <div class="desc">Τακτικά μηνιαία επιδόματα για άτομα με αναπηρία (κινητική, νοητική, οπτική, ακοής, βαριά αναπηρία κ.ά.).</div>
+        <a class="gov-link" href="https://opeka.gov.gr/atoma-me-anapiria/ilektronikes-ypiresies/aitisi-pronoiako-anapiriko-epidoma/" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ανά κατηγορία</div>
     </div>
@@ -135,6 +152,7 @@
       <div>
         <div class="name">Επίδομα Ανασφάλιστων Υπερηλίκων</div>
         <div class="desc">Μηνιαίο βοήθημα για άτομα άνω των 67 ετών που δεν θεμελιώνουν συνταξιοδοτικό δικαίωμα.</div>
+        <a class="gov-link" href="https://opeka.gov.gr/anasfalistoi-yperilikes/epidoma-koinonikis-allilengyis-anasfaliston-yperilikon/ilektronikes-ypiresies/" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">μηνιαίο</div>
     </div>
@@ -143,6 +161,7 @@
       <div>
         <div class="name">Επίδομα Ορεινών &amp; Μειονεκτικών Περιοχών</div>
         <div class="desc">Ετήσια ενίσχυση για οικογένειες που κατοικούν μόνιμα σε ορεινές ή μειονεκτικές περιοχές.</div>
+        <a class="gov-link" href="https://oreina.epidomata.gov.gr/" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ετήσιο</div>
     </div>
@@ -156,6 +175,7 @@
       <div>
         <div class="name">Τακτικό Επίδομα Ανεργίας</div>
         <div class="desc">Για μισθωτούς των οποίων η σύμβαση καταγγέλθηκε ή έληξε, εφόσον συμπληρώνουν τις απαιτούμενες ημέρες ασφάλισης.</div>
+        <a class="gov-link" href="https://www.gov.gr/el/services/1001289/aitese-epidomatos-anergias" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ανά περίπτωση</div>
     </div>
@@ -164,6 +184,7 @@
       <div>
         <div class="name">Επίδομα Μακροχρονίως Ανέργων</div>
         <div class="desc">Για εγγεγραμμένους ανέργους που παραμένουν στα μητρώα πάνω από 12 μήνες και έχουν εξαντλήσει την τακτική επιδότηση.</div>
+        <a class="gov-link" href="https://www.gov.gr/el/services/1001273/epidoma-makrokhronion-anergon" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">μηνιαίο</div>
     </div>
@@ -172,6 +193,7 @@
       <div>
         <div class="name">Ειδική Παροχή Προστασίας Μητρότητας</div>
         <div class="desc">Επιδότηση 9-12 μηνών (μετά την άδεια λοχείας) για μισθωτές, αυτοαπασχολούμενες και αγρότισσες.</div>
+        <a class="gov-link" href="https://parentalbenefits.dypa.gov.gr" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">9-12 μήνες</div>
     </div>
@@ -180,6 +202,7 @@
       <div>
         <div class="name">Βοήθημα Αυτοτελώς &amp; Ανεξαρτήτως Απασχολουμένων</div>
         <div class="desc">Για ελεύθερους επαγγελματίες που διέκοψαν αποδεδειγμένα τη δραστηριότητά τους.</div>
+        <a class="gov-link" href="https://www.gov.gr/el/services/1001292/boethema-anergias-autotelos-kai-anexartetos-apaskholoumenon" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ανά περίπτωση</div>
     </div>
@@ -188,6 +211,7 @@
       <div>
         <div class="name">Ειδικά Εποχικά Βοηθήματα</div>
         <div class="desc">Εφάπαξ ενισχύσεις για εργαζόμενους σε εποχιακά επαγγέλματα (τουρισμός, επισιτισμός, οικοδομή, καλλιτέχνες κ.ά.).</div>
+        <a class="gov-link" href="https://www.gov.gr/upourgeia/upourgeio-ergasias-kai-koinonikes-asphalises/demosia-uperesia-apaskholeses-d-up/eidiko-epokhiko-boethema-dypa" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">εφάπαξ</div>
     </div>
@@ -201,6 +225,7 @@
       <div>
         <div class="name">Επίδομα Ασθενείας &amp; Ατυχήματος</div>
         <div class="desc">Αποζημίωση για τις ημέρες απουσίας από την εργασία λόγω ασθένειας ή εργατικού ατυχήματος.</div>
+        <a class="gov-link" href="https://www.e-efka.gov.gr/el/elektronikes-yperesies/epidoma" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ανά περίπτωση</div>
     </div>
@@ -209,6 +234,7 @@
       <div>
         <div class="name">Επίδομα Κυοφορίας &amp; Λοχείας</div>
         <div class="desc">Καταβάλλεται σε ασφαλισμένες για το διάστημα πριν και μετά τον τοκετό (συνολικά 119 ημέρες).</div>
+        <a class="gov-link" href="https://www.e-efka.gov.gr/el/elektronikes-yperesies/elektronike-aitese-choregeses-epidomatos-metrotetas" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">119 ημέρες</div>
     </div>
@@ -217,6 +243,7 @@
       <div>
         <div class="name">Εξωιδρυματικό Επίδομα</div>
         <div class="desc">Μηνιαίο βοήθημα παραπληγίας / τετραπληγίας για ασφαλισμένους και συνταξιούχους.</div>
+        <a class="gov-link" href="https://www.gov.gr/el/services/1001413/exoidrumatiko-epidoma-paraplegias" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">μηνιαίο</div>
     </div>
@@ -225,6 +252,7 @@
       <div>
         <div class="name">Επίδομα Εξόδων Κηδείας</div>
         <div class="desc">Εφάπαξ χρηματικό ποσό στον φροντιστή της κηδείας θανόντος ασφαλισμένου ή συνταξιούχου.</div>
+        <a class="gov-link" href="https://www.e-efka.gov.gr/el/elektronikes-yperesies/elektronike-yperesia-pleromes-exodon-kedeias" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">εφάπαξ</div>
     </div>
@@ -238,7 +266,10 @@
       <div>
         <div class="name">Κοινωνικό Οικιακό Τιμολόγιο (ΚΟΤ) <span class="in-tool-tag">Στο εργαλείο</span></div>
         <div class="desc">Έκπτωση στο ηλεκτρικό ρεύμα για ευάλωτα νοικοκυριά (μοντελοποιούμε την κατηγορία Β).</div>
-        <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+        <div class="row-links">
+          <a class="tool-link" href="index.html">Δες τον υπολογισμό →</a>
+          <a class="gov-link" href="https://www.gov.gr/ipiresies/ugeia-kai-pronoia/epidomata/koinoniko-oikiako-timologio" target="_blank" rel="noopener">gov.gr ↗</a>
+        </div>
       </div>
       <div class="amount">4,5 λεπτά/kWh</div>
     </div>
@@ -247,6 +278,7 @@
       <div>
         <div class="name">Επίδομα Θέρμανσης</div>
         <div class="desc">Ετήσιο επίδομα για δαπάνες θέρμανσης (πετρέλαιο, φυσικό αέριο, ρεύμα, καυσόξυλα κ.ά.) — εξαρτάται από κλιματική ζώνη οικισμού.</div>
+        <a class="gov-link" href="https://www.gov.gr/ipiresies/ugeia-kai-pronoia/epidomata/epidoma-thermanses" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">ανά καύσιμο/ζώνη</div>
     </div>
@@ -255,6 +287,7 @@
       <div>
         <div class="name">Προγράμματα Vouchers</div>
         <div class="desc">Περιοδικά προγράμματα όπως «Τουρισμός για Όλους», Youth Pass, Κοινωνικός Τουρισμός ΔΥΠΑ κ.ά.</div>
+        <a class="gov-link" href="https://vouchers.gov.gr/" target="_blank" rel="noopener">gov.gr ↗</a>
       </div>
       <div class="amount">περιοδικά</div>
     </div>
