@@ -594,18 +594,28 @@
   const themeToggle = document.getElementById('themeToggle');
   const ttIcon = themeToggle.querySelector('.tt-icon');
   const ttLabel = themeToggle.querySelector('.tt-label');
+  const THEME_KEY = 'chartis-eisodimatos-theme';
 
-  function setTheme(dark){
+  function setTheme(dark, save){
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     themeToggle.setAttribute('aria-pressed', String(dark));
     ttIcon.textContent = dark ? '☀' : '☾';
     ttLabel.textContent = dark ? 'Φωτεινό θέμα' : 'Σκούρο θέμα';
+    if(save){
+      try{ localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); }catch(e){}
+    }
   }
 
-  setTheme(true);
+  let initialDark = true;
+  try{
+    const saved = localStorage.getItem(THEME_KEY);
+    if(saved === 'light') initialDark = false;
+  }catch(e){}
+  setTheme(initialDark, false);
+
   themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    setTheme(!isDark);
+    setTheme(!isDark, true);
   });
 
   document.getElementById('introCloseBtn').addEventListener('click', () => {
