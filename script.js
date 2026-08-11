@@ -262,7 +262,7 @@
   const referenceLayer = document.getElementById('referenceLayer');
   const marker = document.getElementById('movingMarker');
   const referenceIncomeInput = document.getElementById('referenceIncomeInput');
-  let referenceGross = 900;
+  let referenceGross = 920;
   let offsetGross = 0;
   function getEffectiveGross(){
     return Math.min(MAX_GROSS, Math.max(MIN_GROSS, referenceGross + offsetGross));
