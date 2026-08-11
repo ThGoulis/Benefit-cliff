@@ -645,7 +645,11 @@
       summaryInsightEl.textContent = `Η επόμενη αύξηση μισθού μειώνει τα επιδόματά σου κατά περίπου ${Math.round(-benefitDelta100)}€ ανά 100€ αύξησης.`;
     } else if(benefitDelta100 <= -10){
       summaryInsightEl.textContent = `Μέρος της αύξησης μισθού αντισταθμίζεται από μικρή μείωση επιδομάτων εδώ (περίπου ${Math.round(-benefitDelta100)}€ ανά 100€).`;
-    } else if(benefitsNow > 0 || nextCliff){
+    } else if(nextCliff && nextCliff.distance <= 400){
+      summaryInsightEl.textContent = `Υπάρχει πιθανός γκρεμός σε ${nextCliff.distance}€ ακόμα μεικτό (-${Math.round(nextCliff.dropAmount)}€) — όχι άμεσος, αλλά αξίζει προσοχή.`;
+    } else if(nextCliff){
+      summaryInsightEl.textContent = `Σταθερά προς το παρόν — ο επόμενος πιθανός γκρεμός είναι αρκετά μακριά (+${nextCliff.distance}€, -${Math.round(nextCliff.dropAmount)}€).`;
+    } else if(benefitsNow > 0){
       summaryInsightEl.textContent = `Τα επιδόματά σου παραμένουν σταθερά σε αυτό το εύρος — καμία άμεση απώλεια.`;
     } else {
       summaryInsightEl.textContent = `Δεν υπάρχει ενεργό επίδομα σε αυτό το εισόδημα — η αύξηση μισθού μειώνεται μόνο από φόρο/εισφορές, όχι από απώλεια επιδόματος.`;
