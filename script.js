@@ -318,8 +318,11 @@
   const livePreviewBar = document.getElementById('livePreviewBar');
   const livePreviewText = document.getElementById('livePreviewText');
   const summaryNetEl = document.getElementById('summaryNet');
+  const summaryNetAfterEl = document.getElementById('summaryNetAfter');
   const summaryBenefitsEl = document.getElementById('summaryBenefits');
+  const summaryBenefitsAfterEl = document.getElementById('summaryBenefitsAfter');
   const summaryTotalEl = document.getElementById('summaryTotal');
+  const summaryTotalAfterEl = document.getElementById('summaryTotalAfter');
   const summaryRiskEl = document.getElementById('summaryRisk');
   const summaryNextLossEl = document.getElementById('summaryNextLoss');
   const whatifButtons = document.querySelectorAll('.whatif-btn:not(.whatif-btn-reset)');
@@ -549,12 +552,18 @@
       if(diff !== 0) el.classList.add(diff > 0 ? 'gain-color' : 'drop-color');
     }
 
+    function colorAfterCell(el, refVal, effVal){
+      el.classList.remove('gain-color', 'drop-color');
+      if(hasOffset && Math.round(effVal) !== Math.round(refVal)) el.classList.add(effVal >= refVal ? 'gain-color' : 'drop-color');
+    }
+
     // --- Πίνακας ανάλυσης: "Ποσό" = στο πραγματικό σου εισόδημα,
     //     "Μετά" = στο υποθετικό σενάριο (μόνο αν διαφέρει) ---
     eeeAmountEl.textContent = fmt(rRef.eee);
     eeeStatusEl.textContent = rRef.eeeBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.eee > 0 ? 'Ενεργό' : 'Ανενεργό');
     eeeDotEl.className = 'status-dot ' + (rRef.eee > 0 ? 'active' : 'off');
     eeeAfterAmountEl.textContent = hasOffset ? fmt(rEff.eee) : '';
+    colorAfterCell(eeeAfterAmountEl, rRef.eee, rEff.eee);
     setDiffCell(eeeDiffAmountEl, rRef.eee, rEff.eee);
 
     const a21Labels = { 0: 'Εκτός ορίου', 1: '1η κατηγορία', 2: '2η κατηγορία', 3: '3η κατηγορία' };
@@ -562,18 +571,21 @@
     a21StatusEl.textContent = a21Labels[rRef.category];
     a21DotEl.className = 'status-dot ' + (rRef.category === 0 ? 'off' : rRef.category === 3 ? 'warn' : 'active');
     a21AfterAmountEl.textContent = hasOffset ? fmt(rEff.a21) : '';
+    colorAfterCell(a21AfterAmountEl, rRef.a21, rEff.a21);
     setDiffCell(a21DiffAmountEl, rRef.a21, rEff.a21);
 
     rentAmountEl.textContent = fmt(rRef.rent);
     rentStatusEl.textContent = rRef.rentBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.rent > 0 ? 'Ενεργό' : 'Εκτός ορίου');
     rentDotEl.className = 'status-dot ' + (rRef.rent > 0 ? 'active' : 'off');
     rentAfterAmountEl.textContent = hasOffset ? fmt(rEff.rent) : '';
+    colorAfterCell(rentAfterAmountEl, rRef.rent, rEff.rent);
     setDiffCell(rentDiffAmountEl, rRef.rent, rEff.rent);
 
     kotAmountEl.textContent = fmt(rRef.kot);
     kotStatusEl.textContent = rRef.kotBlockedByAssets ? 'Εκτός περιουσιακών ορίων' : (rRef.kot > 0 ? 'Ενεργό' : 'Εκτός ορίου');
     kotDotEl.className = 'status-dot ' + (rRef.kot > 0 ? 'active' : 'off');
     kotAfterAmountEl.textContent = hasOffset ? fmt(rEff.kot) : '';
+    colorAfterCell(kotAfterAmountEl, rRef.kot, rEff.kot);
     setDiffCell(kotDiffAmountEl, rRef.kot, rEff.kot);
 
     breakdownTable.classList.toggle('has-offset', hasOffset);
@@ -600,6 +612,17 @@
     summaryNetEl.textContent = fmt(rRef.netMonthly);
     summaryBenefitsEl.textContent = fmt(benefitsSum);
     summaryTotalEl.textContent = fmt(rRef.total);
+
+    function setSummaryAfter(el, refVal, effVal){
+      el.classList.remove('gain-color', 'drop-color');
+      if(!hasOffset){ el.textContent = ''; return; }
+      el.textContent = fmt(effVal);
+      if(Math.round(effVal) !== Math.round(refVal)) el.classList.add(effVal >= refVal ? 'gain-color' : 'drop-color');
+    }
+    const effBenefitsSum = Math.round(rEff.eee) + Math.round(rEff.a21) + Math.round(rEff.rent) + Math.round(rEff.kot);
+    setSummaryAfter(summaryNetAfterEl, rRef.netMonthly, rEff.netMonthly);
+    setSummaryAfter(summaryBenefitsAfterEl, benefitsSum, effBenefitsSum);
+    setSummaryAfter(summaryTotalAfterEl, rRef.total, rEff.total);
 
     const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(refGross);
 

@@ -643,6 +643,15 @@
     letter-spacing: 0.05em;
     margin-top: 3px;
   }
+  .summary-after{
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .summary-after:empty{ display:none; }
+  .summary-after::before{ content: "→ "; color: var(--ink-faint); font-weight: 400; font-size: 11px; }
+  .summary-after.gain-color{ color: var(--contour); }
+  .summary-after.drop-color{ color: var(--drop); }
 
   /* ---------- Breakdown table (placeholder) ---------- */
   table.breakdown{
