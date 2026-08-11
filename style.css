@@ -621,6 +621,19 @@
     flex: none;
     margin-top: 2px;
   }
+  .risk-scenario-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--hazard);
+    background: rgba(232,163,61,0.10);
+    border: 1px solid var(--hazard);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin-bottom: 12px;
+  }
   .summary-risk-row{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(110px,1fr));

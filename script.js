@@ -324,6 +324,7 @@
   const summaryTotalEl = document.getElementById('summaryTotal');
   const summaryTotalAfterEl = document.getElementById('summaryTotalAfter');
   const summaryRiskEl = document.getElementById('summaryRisk');
+  const riskScenarioTagEl = document.getElementById('riskScenarioTag');
   const summaryNextLossEl = document.getElementById('summaryNextLoss');
   const whatifButtons = document.querySelectorAll('.whatif-btn:not(.whatif-btn-reset)');
 
@@ -624,7 +625,20 @@
     setSummaryAfter(summaryBenefitsAfterEl, benefitsSum, effBenefitsSum);
     setSummaryAfter(summaryTotalAfterEl, rRef.total, rEff.total);
 
-    const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(refGross);
+    // --- Ρίσκο/Επόμενη απώλεια/Insight: ακολουθούν το σενάριο που εξερευνείς
+    //     αυτή τη στιγμή (offset), όχι πάντα το πραγματικό σου εισόδημα —
+    //     έτσι ταιριάζει με ό,τι βλέπεις ήδη στο διάγραμμα από πάνω. Χωρίς
+    //     ενεργό "τι θα γινόταν", παραμένει στο πραγματικό σου εισόδημα.
+    const riskGross = hasOffset ? effGross : refGross;
+    const { severity, nextCliff, benefitsNow, benefitDelta100, cliffImminent } = computeSeverity(riskGross);
+
+    if(hasOffset){
+      const offsetRoundedTag = Math.round(effGross - refGross);
+      riskScenarioTagEl.textContent = `Για το σενάριο ${offsetRoundedTag >= 0 ? '+' : ''}${offsetRoundedTag}€`;
+      riskScenarioTagEl.style.display = '';
+    } else {
+      riskScenarioTagEl.style.display = 'none';
+    }
 
     const severityClass = { high: 'drop-color', medium: 'warn-color', low: 'gain-color' }[severity];
     const riskLabel = { high: 'Υψηλό', medium: 'Μέτριο', low: 'Χαμηλό' }[severity];
@@ -635,7 +649,12 @@
 
     summaryNextLossEl.classList.remove('gain-color', 'warn-color', 'drop-color');
     summaryNextLossEl.textContent = nextCliff ? `+${nextCliff.distance}€ → -${Math.round(nextCliff.dropAmount)}€` : 'Κανένας κοντινός';
-    summaryNextLossEl.classList.add(severityClass);
+    if(nextCliff){
+      // Πάντα κόκκινο/κεχριμπάρι, ποτέ πράσινο — δείχνει αρνητικό ποσό (απώλεια),
+      // ανεξάρτητα από το πόσο μακριά είναι· το "πράσινο" ρίσκο αφορά μόνο
+      // την επικαιρότητα, όχι το αν το ποσό είναι αρνητικό.
+      summaryNextLossEl.classList.add(nextCliff.distance <= 400 ? 'drop-color' : 'warn-color');
+    }
 
     summaryInsightEl.classList.remove('gain-color', 'warn-color', 'drop-color');
     summaryInsightEl.classList.add(severityClass);
