@@ -766,7 +766,14 @@
     font-size: 13px;
     color: var(--ink-soft);
     margin-top: 22px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--paper-card);
+    padding: 14px 18px;
+    transition: border-color 0.15s ease;
   }
+  .advanced-options:hover{ border-color: var(--contour-soft); }
+  .advanced-options[open]{ padding-bottom: 20px; }
   .advanced-options summary{
     cursor: pointer;
     font-weight: 600;
@@ -825,4 +832,29 @@
     .hero{ padding: 40px 0 10px; }
     .chart-card{ padding: 20px 16px 14px; }
     .readouts{ gap: 16px; }
+  }
+
+  /* ---------- Desktop: μεγαλύτερη γραμματοσειρά στα κείμενα ανάγνωσης ---------- */
+  @media (min-width: 900px){
+    body{ font-size: 15.5px; }
+    .lede{ font-size: 19px; }
+    .section-desc{ font-size: 15px; }
+    .advanced-desc{ font-size: 13.5px; }
+    .income-input-row .hint, .field .hint{ font-size: 12px; }
+    .field label{ font-size: 12px; }
+    .field-label{ font-size: 12px; }
+    .adult-card .label{ font-size: 13.5px; }
+    .child-btn{ font-size: 15px; }
+    table.breakdown{ font-size: 14.5px; }
+    .benefit-status{ font-size: 12px; }
+    .summary-lbl{ font-size: 11.5px; }
+    .summary-insight{ font-size: 15px; }
+    .whatif-label{ font-size: 12.5px; }
+    .whatif-btn{ font-size: 13px; }
+    .whatif-custom input, .whatif-custom span, .whatif-custom button{ font-size: 14px; }
+    .result-disclaimer{ font-size: 12px; }
+    .methodology, .advanced-options{ font-size: 14px; }
+    .advanced-hint{ font-size: 13px; }
+    footer{ font-size: 13px; }
+    .risk-scenario-tag{ font-size: 12px; }
   }
