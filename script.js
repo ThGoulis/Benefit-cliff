@@ -716,6 +716,47 @@
     referenceLayer.appendChild(label);
   }
 
+  const FORM_STATE_KEY = 'chartis-eisodimatos-form-state';
+
+  function saveFormState(){
+    try{
+      localStorage.setItem(FORM_STATE_KEY, JSON.stringify({
+        hasSpouse: hasSpouseState,
+        children: childrenState,
+        referenceIncome: referenceIncomeInput.value,
+        age1: ageSelect1.value,
+        spouseIncome: spouseIncomeInput.value,
+        age2: ageSelect2.value,
+        property: propertyValueInput.value,
+        deposits: depositsValueInput.value,
+        kwh: kwhValueInput.value
+      }));
+    }catch(e){}
+  }
+
+  function loadFormState(){
+    try{
+      const raw = localStorage.getItem(FORM_STATE_KEY);
+      if(!raw) return;
+      const s = JSON.parse(raw);
+      if(typeof s.hasSpouse === 'boolean') hasSpouseState = s.hasSpouse;
+      if(typeof s.children === 'number') childrenState = s.children;
+      if(s.referenceIncome){ referenceIncomeInput.value = s.referenceIncome; formatFieldValue(referenceIncomeInput); }
+      if(s.age1) ageSelect1.value = s.age1;
+      if(s.spouseIncome){ spouseIncomeInput.value = s.spouseIncome; formatFieldValue(spouseIncomeInput); }
+      if(s.age2) ageSelect2.value = s.age2;
+      if(s.property){ propertyValueInput.value = s.property; formatFieldValue(propertyValueInput); }
+      if(s.deposits){ depositsValueInput.value = s.deposits; formatFieldValue(depositsValueInput); }
+      if(s.kwh) kwhValueInput.value = s.kwh;
+
+      adultsSingleBtn.classList.toggle('selected', !hasSpouseState);
+      adultsCoupleBtn.classList.toggle('selected', hasSpouseState);
+      childButtons.forEach(b => b.classList.toggle('selected', parseInt(b.dataset.count, 10) === childrenState));
+
+      referenceGross = Math.min(MAX_GROSS, Math.max(MIN_GROSS, parseFormatted(referenceIncomeInput.value)));
+    }catch(e){}
+  }
+
   function rebuildAll(){
     const h = getCurrentHousehold();
     axisLabel.textContent = householdLabel(h);
@@ -729,6 +770,7 @@
     drawCurve();
     drawReferenceLine();
     render();
+    saveFormState();
   }
 
   referenceIncomeInput.addEventListener('input', () => {
@@ -787,6 +829,7 @@
     if(e.key === 'Enter') applyCustomWhatif();
   });
 
+  loadFormState();
   applyLayout();
   rebuildAll();
 
